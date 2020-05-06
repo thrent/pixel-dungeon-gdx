@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ import com.watabou.noosa.ui.Component;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.Journal;
 import com.watabou.pixeldungeon.input.GameAction;
+import com.watabou.pixeldungeon.PixelDungeon;
 import com.watabou.pixeldungeon.scenes.PixelScene;
 import com.watabou.pixeldungeon.ui.Icons;
 import com.watabou.pixeldungeon.ui.ScrollPane;
@@ -33,8 +34,9 @@ import com.watabou.pixeldungeon.ui.Window;
 
 public class WndJournal extends Window {
 	
-	private static final int WIDTH	= 112;
-	private static final int HEIGHT	= 160;
+	private static final int WIDTH		= 112;
+	private static final int HEIGHT_P	= 160;
+	private static final int HEIGHT_L	= 144;
 	
 	private static final int ITEM_HEIGHT	= 18;
 	
@@ -46,7 +48,7 @@ public class WndJournal extends Window {
 	public WndJournal() {
 		
 		super();
-		resize( WIDTH, HEIGHT );
+		resize( WIDTH, PixelDungeon.landscape() ? HEIGHT_L : HEIGHT_P );
 		
 		txtTitle = PixelScene.createText( TXT_TITLE, 9 );
 		txtTitle.hardlight( Window.TITLE_COLOR );
@@ -72,7 +74,7 @@ public class WndJournal extends Window {
 		list = new ScrollPane( content );
 		add( list );
 		
-		list.setRect( 0, txtTitle.height(), WIDTH, HEIGHT - txtTitle.height() );
+		list.setRect( 0, txtTitle.height(), WIDTH, height - txtTitle.height() );
 	}
 
 	@Override

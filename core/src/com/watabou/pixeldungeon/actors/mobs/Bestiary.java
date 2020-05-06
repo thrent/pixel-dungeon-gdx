@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@ package com.watabou.pixeldungeon.actors.mobs;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.watabou.pixeldungeon.actors.Char;
+import com.watabou.pixeldungeon.actors.mobs.Yog.BurningFist;
+import com.watabou.pixeldungeon.actors.mobs.Yog.RottingFist;
 import com.watabou.utils.Random;
 
 public class Bestiary {
@@ -178,7 +180,12 @@ public class Bestiary {
 		return classes[ Random.chances( chances )];
 	}
 	
-	public static boolean isUnique( Char mob ) {
-		return mob instanceof Goo || mob instanceof Tengu || mob instanceof DM300 || mob instanceof King || mob instanceof Yog;
+	public static boolean isBoss( Char mob ) {
+		return 
+			mob instanceof Goo || 
+			mob instanceof Tengu || 
+			mob instanceof DM300 || 
+			mob instanceof King || 
+			mob instanceof Yog || mob instanceof BurningFist || mob instanceof RottingFist;
 	}
 }

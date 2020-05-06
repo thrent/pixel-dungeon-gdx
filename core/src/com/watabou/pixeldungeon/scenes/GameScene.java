@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 package com.watabou.pixeldungeon.scenes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.utils.IntMap;
 import com.watabou.input.NoosaInputProcessor;
@@ -48,6 +49,7 @@ import com.watabou.pixeldungeon.effects.Ripple;
 import com.watabou.pixeldungeon.effects.SpellSprite;
 import com.watabou.pixeldungeon.items.Heap;
 import com.watabou.pixeldungeon.items.Item;
+import com.watabou.pixeldungeon.items.potions.Potion;
 import com.watabou.pixeldungeon.items.wands.WandOfBlink;
 import com.watabou.pixeldungeon.levels.Level;
 import com.watabou.pixeldungeon.levels.RegularLevel;
@@ -123,7 +125,6 @@ public class GameScene extends PixelScene {
 	
 	@Override
 	public void create() {
-		
 		Music.INSTANCE.play( Assets.TUNE, true );
 		Music.INSTANCE.volume( 1f );
 		
@@ -164,11 +165,11 @@ public class GameScene extends PixelScene {
 		for (IntMap.Entry<Heap> heap : Dungeon.level.heaps) {
 			addHeapSprite( heap.value );
 		}
-		
+
 		emitters = new Group();
 		effects = new Group();
 		emoicons = new Group();
-		
+
 		mobs = new Group();
 		add( mobs );
 		
@@ -235,32 +236,6 @@ public class GameScene extends PixelScene {
 		log.setRect( 0, toolbar.top(), attack.left(),  0 );
 		add( log );
 		
-		if (Dungeon.depth < Statistics.deepestFloor) {
-			GLog.i( TXT_WELCOME_BACK, Dungeon.depth );
-		} else {
-			GLog.i( TXT_WELCOME, Dungeon.depth );
-			Sample.INSTANCE.play( Assets.SND_DESCEND );
-		}
-		switch (Dungeon.level.feeling) {
-		case CHASM:
-			GLog.w( TXT_CHASM );
-			break;
-		case WATER:
-			GLog.w( TXT_WATER );
-			break;
-		case GRASS:
-			GLog.w( TXT_GRASS );
-			break;
-		default:
-		}
-		if (Dungeon.level instanceof RegularLevel && 
-			((RegularLevel)Dungeon.level).secretDoors > Random.IntRange( 3, 4 )) {
-			GLog.w( TXT_SECRETS );
-		}
-		if (Dungeon.nightMode && !Dungeon.bossLevel()) {
-			GLog.w( TXT_NIGHT_MODE );
-		}
-		
 		busy = new BusyIndicator();
 		busy.camera = uiCamera;
 		busy.x = 1;
@@ -303,10 +278,56 @@ public class GameScene extends PixelScene {
 		default:
 		}
 		
+		ArrayList<Item> dropped = Dungeon.droppedItems.get( Dungeon.depth );
+		if (dropped != null) {
+			for (Item item : dropped) {
+				int pos = Dungeon.level.randomRespawnCell();
+				if (item instanceof Potion) {
+					((Potion)item).shatter( pos );
+				} else if (item instanceof Plant.Seed) {
+					Dungeon.level.plant( (Plant.Seed)item, pos );
+				} else {
+					Dungeon.level.drop( item, pos );
+				}
+			}
+			Dungeon.droppedItems.remove( Dungeon.depth );
+		}
+		
 		Camera.main.target = hero;
-		fadeIn();
 
+		if (InterlevelScene.mode != InterlevelScene.Mode.NONE) {
+			if (Dungeon.depth < Statistics.deepestFloor) {
+				GLog.h( TXT_WELCOME_BACK, Dungeon.depth );
+			} else {
+				GLog.h( TXT_WELCOME, Dungeon.depth );
+				Sample.INSTANCE.play( Assets.SND_DESCEND );
+			}
+			switch (Dungeon.level.feeling) {
+				case CHASM:
+					GLog.w( TXT_CHASM );
+					break;
+				case WATER:
+					GLog.w( TXT_WATER );
+					break;
+				case GRASS:
+					GLog.w( TXT_GRASS );
+					break;
+				default:
+			}
+			if (Dungeon.level instanceof RegularLevel &&
+					((RegularLevel) Dungeon.level).secretDoors > Random.IntRange( 3, 4 )) {
+				GLog.w( TXT_SECRETS );
+			}
+			if (Dungeon.nightMode && !Dungeon.bossLevel()) {
+				GLog.w( TXT_NIGHT_MODE );
+			}
+
+			InterlevelScene.mode = InterlevelScene.Mode.NONE;
+
+			fadeIn();
+		}
         selectCell( defaultCellListener );
+
 	}
 	
 	public void destroy() {
@@ -591,7 +612,7 @@ public class GameScene extends PixelScene {
 		
 		return wnd;
 	}
-	
+
 	static boolean cancel() {
 		if (Dungeon.hero.curAction != null || Dungeon.hero.restoreHealth) {
 			

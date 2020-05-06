@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ public class Journal {
 		WELL_OF_HEALTH			( "Well of Health" ),
 		WELL_OF_AWARENESS		( "Well of Awareness" ),
 		WELL_OF_TRANSMUTATION	( "Well of Transmutation" ),
+		SACRIFICIAL_FIRE		( "Sacrificial chamber" ),
 		ALCHEMY					( "Alchemy pot" ),
 		GARDEN					( "Garden" ),
 		STATUE					( "Animated statue" ),

@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ public class PixelDungeon extends Game<GameAction> {
 			com.watabou.pixeldungeon.items.rings.RingOfMending.class, 
 			"com.watabou.pixeldungeon.items.rings.RingOfRejuvenation" );
 		com.watabou.utils.Bundle.addAlias( 
-			com.watabou.pixeldungeon.items.wands.WandOfTelekinesis.class, 
+			com.watabou.pixeldungeon.items.wands.WandOfReach.class, 
 			"com.watabou.pixeldungeon.items.wands.WandOfTelekenesis" );
 		com.watabou.utils.Bundle.addAlias( 
 			com.watabou.pixeldungeon.actors.blobs.Foliage.class, 
@@ -71,7 +71,7 @@ public class PixelDungeon extends Game<GameAction> {
 			"com.watabou.pixeldungeon.items.DriedRose" );
 		com.watabou.utils.Bundle.addAlias( 
 			com.watabou.pixeldungeon.actors.mobs.npcs.MirrorImage.class,
-			"com.watabou.pixeldungeon.items.scrolls.ScrollOfMirrorImage.MirrorImage" );
+			"com.watabou.pixeldungeon.items.scrolls.ScrollOfMirrorImage$MirrorImage" );
 		// 1.6.4
 		com.watabou.utils.Bundle.addAlias( 
 			com.watabou.pixeldungeon.items.rings.RingOfElements.class,
@@ -92,6 +92,34 @@ public class PixelDungeon extends Game<GameAction> {
 		com.watabou.utils.Bundle.addAlias( 
 			com.watabou.pixeldungeon.plants.Dreamweed.Seed.class,
 			"com.watabou.pixeldungeon.plants.Blindweed$Seed" );
+		// 1.7.4
+		com.watabou.utils.Bundle.addAlias( 
+			com.watabou.pixeldungeon.items.weapon.enchantments.Shock.class,
+			"com.watabou.pixeldungeon.items.weapon.enchantments.Piercing" );
+		com.watabou.utils.Bundle.addAlias( 
+			com.watabou.pixeldungeon.items.weapon.enchantments.Shock.class,
+			"com.watabou.pixeldungeon.items.weapon.enchantments.Swing" );
+		com.watabou.utils.Bundle.addAlias( 
+			com.watabou.pixeldungeon.items.scrolls.ScrollOfEnchantment.class,
+			"com.watabou.pixeldungeon.items.scrolls.ScrollOfWeaponUpgrade" );
+		// 1.7.5
+		com.watabou.utils.Bundle.addAlias( 
+			com.watabou.pixeldungeon.items.scrolls.ScrollOfEnchantment.class,
+			"com.watabou.pixeldungeon.items.Stylus" );
+		// 1.8.0
+		com.watabou.utils.Bundle.addAlias( 
+			com.watabou.pixeldungeon.actors.mobs.FetidRat.class,
+			"com.watabou.pixeldungeon.actors.mobs.npcs.Ghost$FetidRat" );
+		com.watabou.utils.Bundle.addAlias( 
+			com.watabou.pixeldungeon.plants.Rotberry.class,
+			"com.watabou.pixeldungeon.actors.mobs.npcs.Wandmaker$Rotberry" );
+		com.watabou.utils.Bundle.addAlias( 
+			com.watabou.pixeldungeon.plants.Rotberry.Seed.class,
+			"com.watabou.pixeldungeon.actors.mobs.npcs.Wandmaker$Rotberry$Seed" );
+		// 1.9.0
+		com.watabou.utils.Bundle.addAlias( 
+			com.watabou.pixeldungeon.items.wands.WandOfReach.class,
+			"com.watabou.pixeldungeon.items.wands.WandOfTelekinesis" );
 	}
 	
 	@Override
@@ -108,6 +136,55 @@ public class PixelDungeon extends Game<GameAction> {
 		
 		Music.INSTANCE.enable( music() );
 		Sample.INSTANCE.enable( soundFx() );
+		
+		Sample.INSTANCE.load( 
+			Assets.SND_CLICK, 
+			Assets.SND_BADGE, 
+			Assets.SND_GOLD,
+			
+			Assets.SND_DESCEND,
+			Assets.SND_STEP,
+			Assets.SND_WATER,
+			Assets.SND_OPEN,
+			Assets.SND_UNLOCK,
+			Assets.SND_ITEM,
+			Assets.SND_DEWDROP, 
+			Assets.SND_HIT, 
+			Assets.SND_MISS,
+			Assets.SND_EAT,
+			Assets.SND_READ,
+			Assets.SND_LULLABY,
+			Assets.SND_DRINK,
+			Assets.SND_SHATTER,
+			Assets.SND_ZAP,
+			Assets.SND_LIGHTNING,
+			Assets.SND_LEVELUP,
+			Assets.SND_DEATH,
+			Assets.SND_CHALLENGE,
+			Assets.SND_CURSED,
+			Assets.SND_EVOKE,
+			Assets.SND_TRAP,
+			Assets.SND_TOMB,
+			Assets.SND_ALERT,
+			Assets.SND_MELD,
+			Assets.SND_BOSS,
+			Assets.SND_BLAST,
+			Assets.SND_PLANT,
+			Assets.SND_RAY,
+			Assets.SND_BEACON,
+			Assets.SND_TELEPORT,
+			Assets.SND_CHARMS,
+			Assets.SND_MASTERY,
+			Assets.SND_PUFF,
+			Assets.SND_ROCKS,
+			Assets.SND_BURNING,
+			Assets.SND_FALLING,
+			Assets.SND_GHOST,
+			Assets.SND_SECRET,
+			Assets.SND_BONES,
+			Assets.SND_BEE,
+			Assets.SND_DEGRADE,
+			Assets.SND_MIMIC );
 	}
 
 	@Override

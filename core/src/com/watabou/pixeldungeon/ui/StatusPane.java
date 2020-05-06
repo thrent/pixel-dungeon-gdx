@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.TouchArea;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.particles.BitmaskEmitter;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.ui.Button;
 import com.watabou.noosa.ui.Component;
@@ -62,6 +63,7 @@ public class StatusPane extends Component {
 	
 	private DangerIndicator danger;
 	private LootIndicator loot;
+	private ResumeButton resume;
 	private BuffIndicator buffs;
 	private Compass compass;
 	
@@ -110,8 +112,7 @@ public class StatusPane extends Component {
 		avatar = HeroSprite.avatar( Dungeon.hero.heroClass, lastTier );
 		add( avatar );
 		
-		blood = new Emitter();
-		blood.pos( avatar );
+		blood = new BitmaskEmitter( avatar );
 		blood.pour( BloodParticle.FACTORY, 0.3f );
 		blood.autoKill = false;
 		blood.on = false;
@@ -146,6 +147,9 @@ public class StatusPane extends Component {
 		loot = new LootIndicator();
 		add( loot );
 		
+		resume = new ResumeButton();
+		add( resume );
+		
 		buffs = new BuffIndicator( Dungeon.hero );
 		add( buffs );
 	}
@@ -171,18 +175,48 @@ public class StatusPane extends Component {
 		
 		keys.y = 6;
 		
-		danger.setPos( width - danger.width(), 20 );
-		
-		loot.setPos( width - loot.width(),  danger.bottom() + 2 );
+		layoutTags();
 		
 		buffs.setPos( 32, 11 );
 		
 		btnMenu.setPos( width - btnMenu.width(), 1 );
 	}
 	
+	private void layoutTags() {
+		
+		float pos = 18;
+		
+		if (tagDanger) {
+			danger.setPos( width - danger.width(), pos );
+			pos = danger.bottom() + 1;
+		}
+		
+		if (tagLoot) {
+			loot.setPos( width - loot.width(), pos );
+			pos = loot.bottom() + 1;
+		}
+		
+		if (tagResume) {
+			resume.setPos( width - resume.width(), pos );
+		}
+	}
+	
+	private boolean tagDanger	= false;
+	private boolean tagLoot		= false;
+	private boolean tagResume	= false;
+	
 	@Override
 	public void update() {
 		super.update();
+		
+		if (tagDanger != danger.visible || tagLoot != loot.visible || tagResume != resume.visible) {
+			
+			tagDanger = danger.visible;
+			tagLoot = loot.visible;
+			tagResume = resume.visible;
+			
+			layoutTags();
+		}
 		
 		float health = (float)Dungeon.hero.HP / Dungeon.hero.HT;
 		
@@ -212,8 +246,8 @@ public class StatusPane extends Component {
 			lastLvl = Dungeon.hero.lvl;
 			level.text( Integer.toString( lastLvl ) );
 			level.measure();
-			level.x = PixelScene.align( 27.0f - level.width() / 2 );
-			level.y = PixelScene.align( 27.5f - level.baseLine() / 2 );
+			level.x = PixelScene.align( 27.5f - level.width() / 2 );
+			level.y = PixelScene.align( 28.0f - level.baseLine() / 2 );
 		}
 		
 		int k = IronKey.curDepthQuantity;

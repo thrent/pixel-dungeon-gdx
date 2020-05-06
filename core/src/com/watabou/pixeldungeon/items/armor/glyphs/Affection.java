@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,16 +38,18 @@ public class Affection extends Glyph {
 	@Override
 	public int proc( Armor armor, Char attacker, Char defender, int damage) {
 
-		int level = (int)GameMath.gate( 0, armor.level, 6 );
+		int level = (int)GameMath.gate( 0, armor.effectiveLevel(), 6 );
 		
 		if (Level.adjacent( attacker.pos, defender.pos ) && Random.Int( level / 2 + 5 ) >= 4) {
 			
-			int duration = Random.IntRange( 2, 5 );
+			int duration = Random.IntRange( 3, 7 );
 			
-			Buff.affect( attacker, Charm.class, Charm.durationFactor( attacker ) * duration );
+			Buff.affect( attacker, Charm.class, Charm.durationFactor( attacker ) * duration ).object = defender.id();
 			attacker.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
 			
-			Buff.affect( defender, Charm.class, Random.Float( Charm.durationFactor( defender ) * duration / 2, duration ) );
+			duration *= Random.Float( 0.5f, 1 );
+			
+			Buff.affect( defender, Charm.class, Charm.durationFactor( defender ) * duration ).object = attacker.id();
 			defender.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
 		}
 		

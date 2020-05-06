@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@ public class Tamahawk extends MissileWeapon {
 		image = ItemSpriteSheet.TOMAHAWK;
 		
 		STR = 17;
-		
-		MIN = 4;
-		MAX = 20;
 	}
 	
 	public Tamahawk() {
@@ -43,6 +40,16 @@ public class Tamahawk extends MissileWeapon {
 	public Tamahawk( int number ) {
 		super();
 		quantity = number;
+	}
+	
+	@Override
+	public int min() {
+		return 4;
+	}
+	
+	@Override
+	public int max() {
+		return 20;
 	}
 	
 	@Override

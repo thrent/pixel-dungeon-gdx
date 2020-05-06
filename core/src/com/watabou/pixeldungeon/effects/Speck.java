@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ public class Speck extends Image {
 			break;
 		
 		case FORGE:
-			speed.polar( Random.Float( -3.1415926f, 0 ), Random.Float( 64 ) );
+			speed.polar( -Random.Float( 3.1415926f ), Random.Float( 64 ) );
 			acc.set( 0, 128 );
 			angle = Random.Float( 360 );
 			angularSpeed = Random.Float( -360, +360 );
@@ -140,7 +140,7 @@ public class Speck extends Image {
 			break;
 			
 		case EVOKE:
-			speed.polar( Random.Float( -3.1415926f, 0 ), 50 );
+			speed.polar( -Random.Float( 3.1415926f ), 50 );
 			acc.set( 0, 50 );
 			angle = Random.Float( 360 );
 			angularSpeed = Random.Float( -180, +180 );

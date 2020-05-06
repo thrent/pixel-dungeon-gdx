@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ public class Skeleton extends Mob {
 			Item loot = Generator.random( Generator.Category.WEAPON );
 			for (int i=0; i < 2; i++) {
 				Item l = Generator.random( Generator.Category.WEAPON );
-				if (l.level < loot.level) {
+				if (l.level() < loot.level()) {
 					loot = l;
 				}
 			}

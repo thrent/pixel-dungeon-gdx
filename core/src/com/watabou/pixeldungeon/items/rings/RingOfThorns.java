@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ public class RingOfThorns extends Ring {
 	
 	@Override
 	public Item random() {
-		level = +1;
+		level( +1 );
 		return this;
 	}
 	
@@ -51,6 +51,10 @@ public class RingOfThorns extends Ring {
 		return false;
 	}
 	
+	@Override
+	public void use() {
+		// Do nothing (it can't degrade)
+	}
 	
 	@Override
 	public String desc() {

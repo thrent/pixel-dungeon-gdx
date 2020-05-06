@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import com.watabou.pixeldungeon.actors.buffs.Blindness;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.items.Item;
 import com.watabou.pixeldungeon.items.ItemStatusHandler;
+import com.watabou.pixeldungeon.sprites.HeroSprite;
 import com.watabou.pixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.pixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -43,13 +44,13 @@ public abstract class Scroll extends Item {
 		ScrollOfRecharging.class, 
 		ScrollOfRemoveCurse.class, 
 		ScrollOfTeleportation.class, 
-		ScrollOfUpgrade.class, 
 		ScrollOfChallenge.class,
 		ScrollOfTerror.class,
 		ScrollOfLullaby.class,
-		ScrollOfWeaponUpgrade.class,
 		ScrollOfPsionicBlast.class,
-		ScrollOfMirrorImage.class
+		ScrollOfMirrorImage.class,
+		ScrollOfUpgrade.class,
+		ScrollOfEnchantment.class
 	};
 	private static final String[] runes = 
 		{"KAUNAN", "SOWILO", "LAGUZ", "YNGVI", "GYFU", "RAIDO", "ISAZ", "MANNAZ", "NAUDIZ", "BERKANAN", "ODAL", "TIWAZ"};
@@ -123,6 +124,12 @@ public abstract class Scroll extends Item {
 	}
 	
 	abstract protected void doRead();
+	
+	protected void readAnimation() {
+		curUser.spend( TIME_TO_READ );
+		curUser.busy();
+		((HeroSprite)curUser.sprite).read();
+	}
 	
 	public boolean isKnown() {
 		return handler.isKnown( this );

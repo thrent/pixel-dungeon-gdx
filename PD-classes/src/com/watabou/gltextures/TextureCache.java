@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ public class TextureCache {
 	private static HashMap<Object,SmartTexture> all = new HashMap<Object, SmartTexture>();
 	
 	public static SmartTexture createSolid( int color ) {
-		String key = "1x1:" + color;
+		final String key = "1x1:" + color;
 		
 		if (all.containsKey( key )) {
 			
@@ -41,13 +41,42 @@ public class TextureCache {
 			pixmap.setColor( (color << 8) | (color >>> 24) );
 			pixmap.fill();
 			GdxTexture bmp = new GdxTexture( pixmap );
-
+			
 			SmartTexture tx = new SmartTexture( bmp );
-			all.put(key, tx);
-
+			all.put( key, tx );
+			
 			return tx;
 		}
 	}
+	
+	// public static SmartTexture createGradient( int width, int height, int... colors ) {
+		
+	// 	final String key = "" + width + "x" + height + ":" + colors;
+		
+	// 	if (all.containsKey( key )) {
+			
+	// 		return all.get( key );
+			
+	// 	} else {
+	// 		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.ARGB_8888);
+	// 		Canvas canvas = new Canvas( bmp );
+	// 		Paint paint = new Paint();
+	// 		paint.setShader( new LinearGradient( 0, 0, 0, height, colors, null, TileMode.CLAMP ) );
+	// 		canvas.drawPaint( paint );
+	// 		GdxTexture bmp = new GdxTexture( pixmap );
+
+	// 		// Bitmap bmp = Bitmap.createBitmap( width, height, Bitmap.Config.ARGB_8888 );
+	// 		// Canvas canvas = new Canvas( bmp );
+	// 		// Paint paint = new Paint();
+	// 		// paint.setShader( new LinearGradient( 0, 0, 0, height, colors, null, TileMode.CLAMP ) );
+	// 		// canvas.drawPaint( paint );
+			
+	// 		SmartTexture tx = new SmartTexture( bmp );
+	// 		all.put(key, tx);
+
+	// 		return tx;
+	// 	}
+	// }
 
 	public static void add( Object key, SmartTexture tx ) {
 		all.put( key, tx );

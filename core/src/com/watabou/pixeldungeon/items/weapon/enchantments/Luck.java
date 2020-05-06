@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@ import com.watabou.pixeldungeon.sprites.ItemSprite.Glowing;
 
 public class Luck extends Weapon.Enchantment {
 
-	private static final String TXT_LUCKY	= "Lucky %s";
+	private static final String TXT_LUCKY	= "lucky %s";
 	
 	private static ItemSprite.Glowing GREEN = new ItemSprite.Glowing( 0x00FF00 );
 	
 	@Override
 	public boolean proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		int level = Math.max( 0, weapon.level );
+		int level = Math.max( 0, weapon.effectiveLevel() );
 		
 		int dmg = damage;
 		for (int i=1; i <= level+1; i++) {

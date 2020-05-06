@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,8 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 		POOL		( PoolPainter.class ),
 		RAT_KING	( RatKingPainter.class ),
 		WEAK_FLOOR	( WeakFloorPainter.class ),
-		PIT			( PitPainter.class );
+		PIT			( PitPainter.class ),
+		ALTAR		( AltarPainter.class );
 		
 		private Method paint;
 		
@@ -87,8 +88,8 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 	};
 	
 	public static final ArrayList<Type> SPECIALS = new ArrayList<Type>( Arrays.asList(
-		Type.WEAK_FLOOR, Type.MAGIC_WELL, Type.CRYPT, Type.POOL, Type.GARDEN, Type.LIBRARY, Type.ARMORY,
-		Type.TREASURY, Type.TRAPS, Type.STORAGE, Type.STATUE, Type.LABORATORY, Type.VAULT
+		Type.ARMORY, Type.WEAK_FLOOR, Type.MAGIC_WELL, Type.CRYPT, Type.POOL, Type.GARDEN, Type.LIBRARY,
+		Type.TREASURY, Type.TRAPS, Type.STORAGE, Type.STATUE, Type.LABORATORY, Type.VAULT, Type.ALTAR
 	) );
 	
 	public Type type = Type.NULL;
@@ -163,6 +164,8 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 	public Collection<Room> edges() {
 		return neigbours;
 	} 
+	
+	// FIXME: use proper string constants
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {	
@@ -239,17 +242,3 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

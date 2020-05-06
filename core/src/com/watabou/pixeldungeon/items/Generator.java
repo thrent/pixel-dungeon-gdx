@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import java.util.HashMap;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.actors.hero.Hero;
-import com.watabou.pixeldungeon.actors.mobs.npcs.Wandmaker.Rotberry;
 import com.watabou.pixeldungeon.items.armor.*;
 import com.watabou.pixeldungeon.items.bags.Bag;
 import com.watabou.pixeldungeon.items.food.Food;
@@ -49,7 +48,8 @@ public class Generator {
 		RING	( 2,	Ring.class ),
 		SEED	( 5,	Plant.Seed.class ),
 		FOOD	( 0,	Food.class ),
-		GOLD	( 50,	Gold.class );
+		GOLD	( 50,	Gold.class ),
+		MISC	( 5,	Item.class );
 		
 		public Class<?>[] classes;
 		public float[] probs;
@@ -85,16 +85,16 @@ public class Generator {
 			ScrollOfIdentify.class, 
 			ScrollOfTeleportation.class, 
 			ScrollOfRemoveCurse.class, 
-			ScrollOfUpgrade.class,
 			ScrollOfRecharging.class,
 			ScrollOfMagicMapping.class,
 			ScrollOfChallenge.class,
 			ScrollOfTerror.class,
 			ScrollOfLullaby.class,
-			ScrollOfWeaponUpgrade.class,
 			ScrollOfPsionicBlast.class,
-			ScrollOfMirrorImage.class };
-		Category.SCROLL.probs = new float[]{ 30, 10, 15, 0, 10, 15, 12, 8, 8, 0, 4, 6 };
+			ScrollOfMirrorImage.class,
+			ScrollOfUpgrade.class,
+			ScrollOfEnchantment.class };
+		Category.SCROLL.probs = new float[]{ 30, 10, 15, 10, 15, 12, 8, 8, 4, 6, 0, 1 };
 		
 		Category.POTION.classes = new Class<?>[]{ 
 			PotionOfHealing.class, 
@@ -120,7 +120,7 @@ public class Generator {
 			WandOfBlink.class,
 			WandOfLightning.class,
 			WandOfAmok.class,
-			WandOfTelekinesis.class,
+			WandOfReach.class,
 			WandOfFlock.class,
 			WandOfMagicMissile.class,
 			WandOfDisintegration.class,
@@ -187,6 +187,11 @@ public class Generator {
 			Fadeleaf.Seed.class,
 			Rotberry.Seed.class };
 		Category.SEED.probs = new float[]{ 1, 1, 1, 1, 1, 1, 1, 0 };
+		
+		Category.MISC.classes = new Class<?>[]{ 
+			Bomb.class,
+			Honeypot.class};
+		Category.MISC.probs = new float[]{ 2, 1 };
 	}
 	
 	public static void reset() {

@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ public class WandOfSlowness extends Wand {
 		Char ch = Actor.findChar( cell );
 		if (ch != null) {
 			
-			Buff.affect( ch, Slow.class, Slow.duration( ch ) / 3 + level() );
+			Buff.affect( ch, Slow.class, Slow.duration( ch ) / 3 + power() );
 
 		} else {
 			

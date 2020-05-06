@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import com.watabou.pixeldungeon.PixelDungeon;
 import com.watabou.pixeldungeon.scenes.PixelScene;
 import com.watabou.pixeldungeon.ui.CheckBox;
 import com.watabou.pixeldungeon.ui.RedButton;
+import com.watabou.pixeldungeon.ui.Toolbar;
 import com.watabou.pixeldungeon.ui.Window;
 
 public class WndSettings extends Window {
@@ -44,6 +45,8 @@ public class WndSettings extends Window {
 	private static final String TXT_BINDINGS	= "Key bindings";
 	
 	private static final String TXT_BRIGHTNESS	= "Brightness";
+	
+	private static final String TXT_QUICKSLOT	= "Second quickslot";
 	
 	private static final String TXT_SWITCH_PORT	= "Switch to portrait";
 	private static final String TXT_SWITCH_LAND	= "Switch to landscape";
@@ -132,18 +135,8 @@ public class WndSettings extends Window {
 
 		Button lastBtn = btnSound;
 		if (!inGame) {
-		/*	if (type == Application.ApplicationType.Android || type == Application.ApplicationType.iOS) {
-				RedButton btnOrientation = new RedButton(orientationText()) {
-					@Override
-					protected void onClick() {
-						PixelDungeon.landscape(!PixelDungeon.landscape());
-					}
-				};
-				btnOrientation.setRect(0, btnSound.bottom() + GAP, WIDTH, BTN_HEIGHT);
-				add(btnOrientation);
 
-				lastBtn = btnOrientation;
-			} else*/ if (type == Application.ApplicationType.Desktop) {
+			if (type == Application.ApplicationType.Desktop) {
 
 				RedButton btnResolution = new RedButton(resolutionText()) {
 					@Override
@@ -152,26 +145,26 @@ public class WndSettings extends Window {
 					}
 				};
 				btnResolution.enable( PixelDungeon.instance.getPlatformSupport().isFullscreenEnabled() );
-				btnResolution.setRect(0, btnSound.bottom() + GAP, WIDTH, BTN_HEIGHT);
+				btnResolution.setRect(0, lastBtn.bottom() + GAP, WIDTH, BTN_HEIGHT);
 				add(btnResolution);
 
 				lastBtn = btnResolution;
 			}
+
 		} else {
-		
-			CheckBox btnBrightness = new CheckBox( TXT_BRIGHTNESS ) {
+			
+			CheckBox btnQuickslot = new CheckBox( TXT_QUICKSLOT ) {
 				@Override
 				protected void onClick() {
 					super.onClick();
-					PixelDungeon.brightness( checked() );
+					Toolbar.secondQuickslot( checked() );
 				}
 			};
-			btnBrightness.setRect( 0, btnSound.bottom() + GAP, WIDTH, BTN_HEIGHT );
-			btnBrightness.checked(PixelDungeon.brightness());
-			add( btnBrightness );
+			btnQuickslot.setRect( 0, lastBtn.bottom() + GAP, WIDTH, BTN_HEIGHT );
+			btnQuickslot.checked( Toolbar.secondQuickslot() );
+			add( btnQuickslot );
 			
-			lastBtn = btnBrightness;
-			
+			lastBtn = btnQuickslot;
 		}
 
 		if (type == Application.ApplicationType.Desktop) {

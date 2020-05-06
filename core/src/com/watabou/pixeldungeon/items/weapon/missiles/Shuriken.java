@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,6 @@ public class Shuriken extends MissileWeapon {
 		
 		STR = 13;
 		
-		MIN = 2;
-		MAX = 6;
-		
 		DLY = 0.5f;
 	}
 	
@@ -42,6 +39,16 @@ public class Shuriken extends MissileWeapon {
 	public Shuriken( int number ) {
 		super();
 		quantity = number;
+	}
+	
+	@Override
+	public int min() {
+		return 2;
+	}
+	
+	@Override
+	public int max() {
+		return 6;
 	}
 	
 	@Override

@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import com.watabou.utils.Random;
 
 public class Horror extends Weapon.Enchantment {
 
-	private static final String TXT_ELDRITCH	= "Eldritch %s";
+	private static final String TXT_ELDRITCH	= "eldritch %s";
 	
 	private static ItemSprite.Glowing GREY = new ItemSprite.Glowing( 0x222222 );
 	
@@ -38,14 +38,14 @@ public class Horror extends Weapon.Enchantment {
 		// lvl 0 - 20%
 		// lvl 1 - 33%
 		// lvl 2 - 43%
-		int level = Math.max( 0, weapon.level );
+		int level = Math.max( 0, weapon.effectiveLevel() );
 		
 		if (Random.Int( level + 5 ) >= 4) {
 			
 			if (defender == Dungeon.hero) {
 				Buff.affect( defender, Vertigo.class, Vertigo.duration( defender ) );
 			} else {
-				Buff.affect( defender, Terror.class, Terror.DURATION ).source = attacker;
+				Buff.affect( defender, Terror.class, Terror.DURATION ).object = attacker.id();
 			}
 			
 			return true;

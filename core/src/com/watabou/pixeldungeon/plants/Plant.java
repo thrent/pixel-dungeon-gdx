@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +146,9 @@ public class Plant implements Bundlable {
 		
 		public Plant couch( int pos ) {
 			try {
-				Sample.INSTANCE.play( Assets.SND_PLANT );
+				if (Dungeon.visible[pos]) {
+					Sample.INSTANCE.play( Assets.SND_PLANT );
+				}
 				Plant plant = ClassReflection.newInstance(plantClass);
 				plant.pos = pos;
 				return plant;
@@ -171,7 +173,7 @@ public class Plant implements Bundlable {
 		}
 		
 		@Override
-		public String info() {
+		public String info() { 
 			return String.format( TXT_INFO, Utils.indefinite( plantName ), desc() );
 		}
 	}

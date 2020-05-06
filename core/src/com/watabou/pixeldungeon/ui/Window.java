@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,6 @@
  */
 package com.watabou.pixeldungeon.ui;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.badlogic.gdx.Input;
 import com.watabou.input.NoosaInputProcessor;
@@ -29,6 +27,7 @@ import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.TouchArea;
 import com.watabou.pixeldungeon.Chrome;
 import com.watabou.pixeldungeon.input.GameAction;
+import com.watabou.pixeldungeon.effects.ShadowBox;
 import com.watabou.pixeldungeon.scenes.PixelScene;
 import com.watabou.utils.Signal;
 
@@ -38,6 +37,7 @@ public class Window extends Group implements Signal.Listener<NoosaInputProcessor
 	protected int height;
 	
 	protected TouchArea blocker;
+	protected ShadowBox shadow;
 	protected NinePatch chrome;
 	
 	public static final int TITLE_COLOR = 0xFFFF44;
@@ -72,6 +72,12 @@ public class Window extends Group implements Signal.Listener<NoosaInputProcessor
 		this.width = width;
 		this.height = height;
 		
+		shadow = new ShadowBox();
+		shadow.am = 0.5f;
+		shadow.camera = PixelScene.uiCamera.visible ? 
+			PixelScene.uiCamera : Camera.main;
+		add( shadow );
+		
 		chrome.x = -chrome.marginLeft();
 		chrome.y = -chrome.marginTop();
 		chrome.size( 
@@ -87,7 +93,12 @@ public class Window extends Group implements Signal.Listener<NoosaInputProcessor
 		camera.y = (int)(Game.height - camera.height * camera.zoom) / 2;
 		camera.scroll.set( chrome.x, chrome.y );
 		Camera.add( camera );
-
+		
+		shadow.boxRect( 
+			camera.x / camera.zoom, 
+			camera.y / camera.zoom, 
+			chrome.width(), chrome.height );
+		
 		Game.instance.getInputProcessor().addKeyListener(this);
 	}
 	
@@ -102,6 +113,8 @@ public class Window extends Group implements Signal.Listener<NoosaInputProcessor
 		camera.resize( (int)chrome.width, (int)chrome.height );
 		camera.x = (int)(Game.width - camera.screenWidth()) / 2;
 		camera.y = (int)(Game.height - camera.screenHeight()) / 2;
+		
+		shadow.boxRect( camera.x / camera.zoom, camera.y / camera.zoom, chrome.width(), chrome.height );
 	}
 	
 	public void hide() {
@@ -150,62 +163,5 @@ public class Window extends Group implements Signal.Listener<NoosaInputProcessor
 	}
 	
 	public void onMenuPressed() {
-	}
-	
-	protected static class Highlighter {
-		
-		private static final Pattern HIGHLIGHTER	= Pattern.compile( "_(.*?)_" );
-		private static final Pattern STRIPPER		= Pattern.compile( "[ \n]" );
-		
-		public String text;
-		
-		public boolean[] mask;
-		
-		public Highlighter( String text ) {
-			
-			String stripped = STRIPPER.matcher( text ).replaceAll( "" );
-			mask = new boolean[stripped.length()];
-			
-			Matcher m = HIGHLIGHTER.matcher( stripped );
-			
-			int pos = 0;
-			int lastMatch = 0;
-			
-			while (m.find()) {
-				pos += (m.start() - lastMatch);
-				int groupLen = m.group( 1 ).length();
-				for (int i=pos; i < pos + groupLen; i++) {
-					mask[i] = true;
-				}
-				pos += groupLen;
-				lastMatch = m.end();
-			}
-			
-			m.reset( text );
-			StringBuffer sb = new StringBuffer();
-			while (m.find()) {
-				m.appendReplacement( sb, m.group( 1 ) );
-			}
-			m.appendTail( sb );
-			
-			this.text = sb.toString();
-		}
-		
-		public boolean[] inverted() {
-			boolean[] result = new boolean[mask.length];
-			for (int i=0; i < result.length; i++) {
-				result[i] = !mask[i];
-			}
-			return result;
-		}
-		
-		public boolean isHighlighted() {
-			for (int i=0; i < mask.length; i++) {
-				if (mask[i]) {
-					return true;
-				}
-			}
-			return false;
-		}
 	}
 }

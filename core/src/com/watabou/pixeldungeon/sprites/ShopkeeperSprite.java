@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,10 @@ public class ShopkeeperSprite extends MobSprite {
 		idle = new Animation( 10, true );
 		idle.frames( film, 1, 1, 1, 1, 1, 0, 0, 0, 0 );
 		
+		die = new Animation( 20, false );
+		die.frames( film, 0 );
+		
 		run = idle.clone();
-		die = idle.clone();
 		attack = idle.clone();
 		
 		idle();

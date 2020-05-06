@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ public class WandOfFirebolt extends Wand {
 	@Override
 	protected void onZap( int cell ) {
 
-		int level = level();
+		int level = power();
 		
 		for (int i=1; i < Ballistica.distance - 1; i++) {
 			int c = Ballistica.trace[i];
@@ -62,7 +62,7 @@ public class WandOfFirebolt extends Wand {
 			
 			ch.damage( Random.Int( 1, 8 + level * level ), this );
 			Buff.affect( ch, Burning.class ).reignite( ch );
-			
+
 			ch.sprite.emitter().burst( FlameParticle.FACTORY, 5 );
 			
 			if (ch == curUser && !ch.isAlive()) {

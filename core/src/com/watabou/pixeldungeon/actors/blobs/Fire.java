@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ import com.watabou.pixeldungeon.effects.BlobEmitter;
 import com.watabou.pixeldungeon.effects.particles.FlameParticle;
 import com.watabou.pixeldungeon.items.Heap;
 import com.watabou.pixeldungeon.levels.Level;
-import com.watabou.pixeldungeon.levels.Terrain;
 import com.watabou.pixeldungeon.scenes.GameScene;
 
 public class Fire extends Blob {
@@ -53,7 +52,7 @@ public class Fire extends Blob {
 				if (fire <= 0 && flamable[pos]) {
 					
 					int oldTile = Dungeon.level.map[pos];
-					Level.set( pos, Terrain.EMBERS );
+					Dungeon.level.destroy( pos );
 					
 					observe = true;
 					GameScene.updateMap( pos );

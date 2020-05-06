@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,8 +105,8 @@ public class Bones {
 					item.cursedKnown = true;
 					if (item.isUpgradable()) {
 						int lvl = (Dungeon.depth - 1) * 3 / 5 + 1;
-						if (lvl < item.level) {
-							item.degrade( item.level - lvl );
+						if (lvl < item.level()) {
+							item.degrade( item.level() - lvl );
 						}
 						item.levelKnown = false;
 					}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public class Texture {
 	public static void activate( int index ) {
 		Gdx.gl.glActiveTexture( GL20.GL_TEXTURE0 + index );
 	}
-	
+
 	public void bind() {
 		bitmap.bind();
 	}

@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,17 +37,16 @@ public class Metabolism extends Glyph {
 	@Override
 	public int proc( Armor armor, Char attacker, Char defender, int damage) {
 
-		int level = Math.max( 0, armor.level );
+		int level = Math.max( 0, armor.effectiveLevel() );
 		if (Random.Int( level / 2 + 5 ) >= 4) {
 			
 			int healing = Math.min( defender.HT - defender.HP, Random.Int( 1, defender.HT / 5 ) );
-
 			if (healing > 0) {
 				
 				Hunger hunger = defender.buff( Hunger.class );
-
+				
 				if (hunger != null && !hunger.isStarving()) {
-
+					
 					hunger.satisfy( -Hunger.STARVING / 10 );
 					BuffIndicator.refreshHero();
 					

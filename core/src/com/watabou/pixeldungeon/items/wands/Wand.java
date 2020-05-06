@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,8 @@ import com.watabou.utils.Random;
 
 public abstract class Wand extends KindOfWeapon {
 
+	private static final int USAGES_TO_KNOW	= 40;
+	
 	public static final String AC_ZAP	= "ZAP";
 	
 	private static final String TXT_WOOD	= "This thin %s wand is warm to the touch. Who knows what it will do when used?";
@@ -56,6 +58,8 @@ public abstract class Wand extends KindOfWeapon {
 	private static final String TXT_FIZZLES		= "your wand fizzles; it must be out of charges for now";
 	private static final String TXT_SELF_TARGET	= "You can't target yourself";
 	
+	private static final String TXT_IDENTIFY	= "You are now familiar enough with your %s.";
+	
 	private static final float TIME_TO_ZAP	= 1f;
 	
 	public int maxCharges = initialCharges();
@@ -64,6 +68,8 @@ public abstract class Wand extends KindOfWeapon {
 	protected Charger charger;
 	
 	private boolean curChargeKnown = false;
+	
+	private int usagesToKnow = USAGES_TO_KNOW;
 	
 	protected boolean hitChars = true;
 	
@@ -76,7 +82,7 @@ public abstract class Wand extends KindOfWeapon {
 		WandOfBlink.class,
 		WandOfLightning.class,
 		WandOfAmok.class,
-		WandOfTelekinesis.class,
+		WandOfReach.class,
 		WandOfFlock.class,
 		WandOfDisintegration.class,
 		WandOfAvalanche.class
@@ -121,9 +127,7 @@ public abstract class Wand extends KindOfWeapon {
 	
 	public Wand() {
 		super();
-		
-		calculateDamage();
-		
+
 		try {
 			image = handler.image( this );
 			wood = handler.label( this );
@@ -186,7 +190,9 @@ public abstract class Wand extends KindOfWeapon {
 	};
 	
 	public void charge( Char owner ) {
-		(charger = new Charger()).attachTo( owner );
+		if (charger == null) {
+			(charger = new Charger()).attachTo( owner );
+		}
 	}
 	
 	@Override
@@ -201,12 +207,13 @@ public abstract class Wand extends KindOfWeapon {
 		}
 	}
 	
-	public int level() {
+	public int power() {
+		int eLevel = effectiveLevel();
 		if (charger != null) {
 			Power power = charger.target.buff( Power.class );
-			return power == null ? level : Math.max( level + power.level, 0 ); 
+			return power == null ? eLevel : Math.max( eLevel + power.level, 0 ); 
 		} else {
-			return level;
+			return eLevel;
 		}
 	}
 	
@@ -244,6 +251,10 @@ public abstract class Wand extends KindOfWeapon {
 			sb.append( " (" + status +  ")" );
 		}
 		
+		if (isBroken()) {
+			sb.insert( 0, "broken " );
+		}
+		
 		return sb.toString();
 	}
 	
@@ -258,7 +269,8 @@ public abstract class Wand extends KindOfWeapon {
 		if (Dungeon.hero.heroClass == HeroClass.MAGE) {
 			info.append( "\n\n" );
 			if (levelKnown) {
-				info.append( String.format( TXT_DAMAGE, MIN + (MAX - MIN) / 2 ) );
+				int min = min();
+				info.append( String.format( TXT_DAMAGE, min + (max() - min) / 2 ) );
 			} else {
 				info.append(  String.format( TXT_WEAPON ) );
 			}
@@ -302,21 +314,31 @@ public abstract class Wand extends KindOfWeapon {
 		return this;
 	}
 	
+	@Override
+	public int maxDurability( int lvl ) {
+		return 6 * (lvl < 16 ? 16 - lvl : 1);
+	}
+	
 	protected void updateLevel() {
-		maxCharges = Math.min( initialCharges() + level, 9 );
+		maxCharges = Math.min( initialCharges() + level(), 9 );
 		curCharges = Math.min( curCharges, maxCharges );
-		
-		calculateDamage();
 	}
 	
 	protected int initialCharges() {
 		return 2;
 	}
 	
-	private void calculateDamage() {
+	@Override
+	public int min() {
+		int tier = 1 + effectiveLevel() / 3;
+		return tier;
+	}
+	
+	@Override
+	public int max() {
+		int level = effectiveLevel();
 		int tier = 1 + level / 3;
-		MIN = tier;
-		MAX = (tier * tier - tier + 10) / 2 + level;
+		return (tier * tier - tier + 10) / 2 + level;
 	}
 	
 	protected void fx( int cell, Callback callback ) {
@@ -325,8 +347,16 @@ public abstract class Wand extends KindOfWeapon {
 	}
 
 	protected void wandUsed() {
+		
 		curCharges--;
-		updateQuickslot();
+		if (!isIdentified() && --usagesToKnow <= 0) {
+			identify();
+			GLog.w( TXT_IDENTIFY, name() );
+		} else {
+			updateQuickslot();
+		}
+		
+		use();
 		
 		curUser.spendAndNext( TIME_TO_ZAP );
 	}
@@ -349,23 +379,10 @@ public abstract class Wand extends KindOfWeapon {
 	
 	@Override
 	public int price() {
-		int price = 50;
-		if (cursed && cursedKnown) {
-			price /= 2;
-		}
-		if (levelKnown) {
-			if (level > 0) {
-				price *= (level + 1);
-			} else if (level < 0) {
-				price /= (1 - level);
-			}
-		}
-		if (price < 1) {
-			price = 1;
-		}
-		return price;
+		return considerState( 50 );
 	}
 	
+	private static final String UNFAMILIRIARITY		= "unfamiliarity";
 	private static final String MAX_CHARGES			= "maxCharges";
 	private static final String CUR_CHARGES			= "curCharges";
 	private static final String CUR_CHARGE_KNOWN	= "curChargeKnown";
@@ -373,6 +390,7 @@ public abstract class Wand extends KindOfWeapon {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
+		bundle.put( UNFAMILIRIARITY, usagesToKnow );
 		bundle.put( MAX_CHARGES, maxCharges );
 		bundle.put( CUR_CHARGES, curCharges );
 		bundle.put( CUR_CHARGE_KNOWN, curChargeKnown );
@@ -381,6 +399,9 @@ public abstract class Wand extends KindOfWeapon {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
+		if ((usagesToKnow = bundle.getInt( UNFAMILIRIARITY )) == 0) {
+			usagesToKnow = USAGES_TO_KNOW;
+		}
 		maxCharges = bundle.getInt( MAX_CHARGES );
 		curCharges = bundle.getInt( CUR_CHARGES );
 		curChargeKnown = bundle.getBoolean( CUR_CHARGE_KNOWN );
@@ -466,7 +487,7 @@ public abstract class Wand extends KindOfWeapon {
 		
 		protected void delay() {
 			float time2charge = ((Hero)target).heroClass == HeroClass.MAGE ? 
-				TIME_TO_CHARGE / (float)Math.sqrt( 1 + level ) : 
+				TIME_TO_CHARGE / (float)Math.sqrt( 1 + effectiveLevel() ) : 
 				TIME_TO_CHARGE;
 			spend( time2charge );
 		}

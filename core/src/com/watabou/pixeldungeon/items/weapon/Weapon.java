@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +33,17 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-public class Weapon extends KindOfWeapon {
+abstract public class Weapon extends KindOfWeapon {
 
+	private static final int HITS_TO_KNOW	= 20;
+	
 	private static final String TXT_IDENTIFY		= 
 		"You are now familiar enough with your %s to identify it. It is %s.";
 	private static final String TXT_INCOMPATIBLE	= 
 		"Interaction of different types of magic has negated the enchantment on this weapon!";
-	private static final String TXT_TO_STRING		= "%s :%d";
+	
+	private static final String TXT_TO_STRING	= "%s :%d";
+	private static final String TXT_BROKEN		= "broken %s :%d";
 	
 	public int		STR	= 10;
 	public float	ACU	= 1;
@@ -50,7 +54,7 @@ public class Weapon extends KindOfWeapon {
 	}
 	public Imbue imbue = Imbue.NONE;
 	
-	private int hitsToKnow = 20;
+	private int hitsToKnow = HITS_TO_KNOW;
 	
 	protected Enchantment enchantment;
 	
@@ -68,14 +72,18 @@ public class Weapon extends KindOfWeapon {
 				Badges.validateItemLevelAquired( this );
 			}
 		}
+		
+		use();
 	}
 	
-	private static final String ENCHANTMENT	= "enchantment";
-	private static final String IMBUE		= "imbue";
+	private static final String UNFAMILIRIARITY	= "unfamiliarity";
+	private static final String ENCHANTMENT		= "enchantment";
+	private static final String IMBUE			= "imbue";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
+		bundle.put( UNFAMILIRIARITY, hitsToKnow );
 		bundle.put( ENCHANTMENT, enchantment );
 		bundle.put( IMBUE, imbue );
 	}
@@ -83,6 +91,9 @@ public class Weapon extends KindOfWeapon {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
+		if ((hitsToKnow = bundle.getInt( UNFAMILIRIARITY )) == 0) {
+			hitsToKnow = HITS_TO_KNOW;
+		}
 		enchantment = (Enchantment)bundle.get( ENCHANTMENT );
 		imbue = bundle.getEnum( IMBUE, Imbue.class );
 	}
@@ -139,13 +150,13 @@ public class Weapon extends KindOfWeapon {
 	
 	public Item upgrade( boolean enchant ) {		
 		if (enchantment != null) {
-			if (!enchant && Random.Int( level ) > 0) {
+			if (!enchant && Random.Int( level() ) > 0) {
 				GLog.w( TXT_INCOMPATIBLE );
 				enchant( null );
 			}
 		} else {
 			if (enchant) {
-				enchant( Enchantment.random() );
+				enchant();
 			}
 		}
 		
@@ -153,8 +164,13 @@ public class Weapon extends KindOfWeapon {
 	}
 	
 	@Override
+	public int maxDurability( int lvl ) {
+		return 5 * (lvl < 16 ? 16 - lvl : 1);
+	}
+	
+	@Override
 	public String toString() {
-		return levelKnown ? Utils.format( TXT_TO_STRING, super.toString(), STR ) : super.toString();
+		return levelKnown ? Utils.format( isBroken() ? TXT_BROKEN : TXT_TO_STRING, super.toString(), STR ) : super.toString();
 	}
 	
 	@Override
@@ -183,8 +199,19 @@ public class Weapon extends KindOfWeapon {
 	}
 	
 	public Weapon enchant( Enchantment ench ) {
-		this.enchantment = ench;
+		enchantment = ench;
 		return this;
+	}
+	
+	public Weapon enchant() {
+		
+		Class<? extends Enchantment> oldEnchantment = enchantment != null ? enchantment.getClass() : null;
+		Enchantment ench = Enchantment.random();
+		while (ench.getClass() == oldEnchantment) {
+			ench = Enchantment.random();
+		}
+		
+		return enchant( ench );
 	}
 	
 	public boolean isEnchanted() {
@@ -200,8 +227,9 @@ public class Weapon extends KindOfWeapon {
 		
 		private static final Class<?>[] enchants = new Class<?>[]{ 
 			Fire.class, Poison.class, Death.class, Paralysis.class, Leech.class, 
-			Slow.class, Swing.class, Piercing.class, Instability.class, Horror.class, Luck.class };
-		private static final float[] chances= new float[]{ 10, 10, 1, 2, 1, 2, 3, 3, 3, 2, 2 };
+			Slow.class, Shock.class, Instability.class, Horror.class, Luck.class,
+			Tempering.class};
+		private static final float[] chances= new float[]{ 10, 10, 1, 2, 1, 2, 6, 3, 2, 2, 3 };
 			
 		public abstract boolean proc( Weapon weapon, Char attacker, Char defender, int damage );
 		

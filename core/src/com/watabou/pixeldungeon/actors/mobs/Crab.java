@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ public class Crab extends Mob {
 	
 	@Override
 	public void die( Object cause ) {
-		Ghost.Quest.process( pos );
+		Ghost.Quest.processSewersKill( pos );
 		super.die( cause );
 	}
 	

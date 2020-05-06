@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 package com.watabou.pixeldungeon.items.weapon.missiles;
+
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.items.Item;
-import com.watabou.pixeldungeon.items.weapon.Weapon;
-import com.watabou.pixeldungeon.items.weapon.enchantments.Piercing;
-import com.watabou.pixeldungeon.items.weapon.enchantments.Swing;
 import com.watabou.pixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.pixeldungeon.sprites.MissileSprite;
 
@@ -34,10 +32,17 @@ public class Boomerang extends MissileWeapon {
 		
 		STR = 10;
 		
-		MIN = 1;
-		MAX = 4;
-		
 		stackable = false;
+	}
+	
+	@Override
+	public int min() {
+		return isBroken() ? 1 : 1 + level();
+	}
+	
+	@Override
+	public int max() {
+		return isBroken() ? 4 : 4 + 2 * level();
 	}
 	
 	@Override
@@ -52,8 +57,6 @@ public class Boomerang extends MissileWeapon {
 	
 	@Override
 	public Item upgrade( boolean enchant ) {
-		MIN += 1;
-		MAX += 2;
 		super.upgrade( enchant );
 		
 		updateQuickslot();
@@ -62,19 +65,8 @@ public class Boomerang extends MissileWeapon {
 	}
 	
 	@Override
-	public Item degrade() {
-		MIN -= 1;
-		MAX -= 2;
-		return super.degrade();
-	}
-	
-	@Override
-	public Weapon enchant( Enchantment ench ) {
-		while (ench instanceof Piercing || ench instanceof Swing) {
-			ench = Enchantment.random();
-		}
-		
-		return super.enchant( ench );
+	public int maxDurability( int lvl ) {
+		return 8 * (lvl < 16 ? 16 - lvl : 1);
 	}
 	
 	@Override

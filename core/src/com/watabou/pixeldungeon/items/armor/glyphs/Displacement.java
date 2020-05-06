@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,8 @@ public class Displacement extends Glyph {
 			return damage;
 		}
 		
-		int nTries = (armor.level < 0 ? 1 : armor.level + 1) * 5;
+		int level = armor.effectiveLevel();
+		int nTries = (level < 0 ? 1 : level + 1) * 5;
 		for (int i=0; i < nTries; i++) {
 			int pos = Random.Int( Level.LENGTH );
 			if (Dungeon.visible[pos] && Level.passable[pos] && Actor.findChar( pos ) == null) {

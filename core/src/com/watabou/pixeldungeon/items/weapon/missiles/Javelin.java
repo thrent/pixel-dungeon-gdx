@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@ public class Javelin extends MissileWeapon {
 		image = ItemSpriteSheet.JAVELIN;
 		
 		STR = 15;
-		
-		MIN = 2;
-		MAX = 15;
 	}
 	
 	public Javelin() {
@@ -43,6 +40,16 @@ public class Javelin extends MissileWeapon {
 	public Javelin( int number ) {
 		super();
 		quantity = number;
+	}
+	
+	@Override
+	public int min() {
+		return 2;
+	}
+	
+	@Override
+	public int max() {
+		return 15;
 	}
 	
 	@Override

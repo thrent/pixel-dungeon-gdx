@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,16 +26,21 @@ import com.watabou.pixeldungeon.DungeonTilemap;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.input.GameAction;
+import com.watabou.pixeldungeon.actors.hero.Belongings;
+import com.watabou.pixeldungeon.actors.mobs.Mob;
 import com.watabou.pixeldungeon.items.Item;
+import com.watabou.pixeldungeon.mechanics.Ballistica;
 import com.watabou.pixeldungeon.scenes.GameScene;
 import com.watabou.pixeldungeon.scenes.PixelScene;
 import com.watabou.pixeldungeon.windows.WndBag;
+import com.watabou.utils.Bundle;
 
 public class QuickSlot extends Button<GameAction> implements WndBag.Listener {
 
 	private static final String TXT_SELECT_ITEM = "Select an item for the quickslot";
 	
-	private static QuickSlot instance;
+	private static QuickSlot primary;
+	private static QuickSlot secondary;
 	
 	private Item itemInSlot;
 	private ItemSlot slot;
@@ -44,26 +49,31 @@ public class QuickSlot extends Button<GameAction> implements WndBag.Listener {
 	private Image crossM;
 	
 	private boolean targeting = false;
-	private Item lastItem = null;
-	private Char lastTarget= null;
-
-	public QuickSlot() {
-		super();
-
-		hotKey = GameAction.QUICKSLOT;
-
+	
+	private static Char lastTarget= null;
+	public static Object primaryValue;
+	public static Object secondaryValue;
+	
+	public void primary() {
+		primary = this;
 		item( select() );
-		
-		instance = this;
+	}
+	
+	public void secondary() {
+		secondary = this;
+		item( select() );
 	}
 	
 	@Override
 	public void destroy() {
 		super.destroy();
 		
-		instance = null;
+		if (this == primary) {
+			primary = null;
+		} else {
+			secondary = null;
+		}
 		
-		lastItem = null;
 		lastTarget = null;
 	}
 	
@@ -83,13 +93,8 @@ public class QuickSlot extends Button<GameAction> implements WndBag.Listener {
 				if (targeting) {
 					GameScene.handleCell( lastTarget.pos );
 				} else {
-					Item item = select();
-					if (item == lastItem) {
-						useTargeting();
-					} else {
-						lastItem = item;
-					}
-					item.execute( Dungeon.hero );
+					useTargeting();
+					select().execute( Dungeon.hero );
 				}
 			}
 			@Override
@@ -138,15 +143,17 @@ public class QuickSlot extends Button<GameAction> implements WndBag.Listener {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static Item select() {
-		if (Dungeon.quickslot instanceof Item) {
+	private Item select() {
+		
+		Object content = (this == primary ? primaryValue : secondaryValue);
+		if (content instanceof Item) {
 			
-			return (Item)Dungeon.quickslot;
+			return (Item)content;
 			
-		} else if (Dungeon.quickslot != null) {
+		} else if (content != null) {
 			
-			Item item = Dungeon.hero.belongings.getItem( (Class<? extends Item>)Dungeon.quickslot );			
-			return item != null ? item : Item.virtual( (Class<? extends Item>)Dungeon.quickslot );
+			Item item = Dungeon.hero.belongings.getItem( (Class<? extends Item>)content );			
+			return item != null ? item : Item.virtual( (Class<? extends Item>)content );
 			
 		} else {
 			
@@ -158,7 +165,11 @@ public class QuickSlot extends Button<GameAction> implements WndBag.Listener {
 	@Override
 	public void onSelect( Item item ) {
 		if (item != null) {
-			Dungeon.quickslot = item.stackable ? item.getClass() : item;
+			if (this == primary) {
+				primaryValue = (item.stackable ? item.getClass() : item);
+			} else {
+				secondaryValue = (item.stackable ? item.getClass() : item);
+			}
 			refresh();
 		}
 	}
@@ -190,6 +201,27 @@ public class QuickSlot extends Button<GameAction> implements WndBag.Listener {
 		targeting = lastTarget != null && lastTarget.isAlive() && Dungeon.visible[lastTarget.pos];
 		
 		if (targeting) {
+			int pos = Ballistica.cast( Dungeon.hero.pos, lastTarget.pos, false, true );
+			if (pos != lastTarget.pos) {
+				lastTarget = null;
+				targeting = false;
+			}
+		}
+		
+		if (!targeting) {
+			int n = Dungeon.hero.visibleEnemies();
+			for (int i=0; i < n; i++) {
+				Mob enemy = Dungeon.hero.visibleEnemy( i );
+				int pos = Ballistica.cast( Dungeon.hero.pos, enemy.pos, false, true );
+				if (pos == enemy.pos) { 
+					lastTarget = enemy;
+					targeting = true;
+					break;
+				}
+			}
+		}
+		
+		if (targeting) {
 			if (Actor.all().contains( lastTarget )) {
 				lastTarget.sprite.parent.add( crossM );
 				crossM.point( DungeonTilemap.tileToWorld( lastTarget.pos ) );
@@ -201,24 +233,99 @@ public class QuickSlot extends Button<GameAction> implements WndBag.Listener {
 	}
 	
 	public static void refresh() {
-		if (instance != null) {
-			instance.item( select() );
+		if (primary != null) {
+			primary.item( primary.select() );
+		}
+		if (secondary != null) {
+			secondary.item( secondary.select() );
 		}
 	}
 	
 	public static void target( Item item, Char target ) {
-		if (item == instance.lastItem && target != Dungeon.hero) {
-			instance.lastTarget = target;
-			
+		if (target != Dungeon.hero) {
+			lastTarget = target;
 			HealthIndicator.instance.target( target );
 		}
 	}
 	
 	public static void cancel() {
-		if (instance != null && instance.targeting) {
-			instance.crossB.visible = false;
-			instance.crossM.remove();
-			instance.targeting = false;
+		if (primary != null && primary.targeting) {
+			primary.crossB.visible = false;
+			primary.crossM.remove();
+			primary.targeting = false;
+		}
+		if (secondary != null && secondary.targeting) {
+			secondary.crossB.visible = false;
+			secondary.crossM.remove();
+			secondary.targeting = false;
+		}
+	}
+	
+	private static final String QUICKSLOT1	= "quickslot";
+	private static final String QUICKSLOT2	= "quickslot2";
+	
+	@SuppressWarnings("unchecked")
+	public static void save( Bundle bundle ) {
+		Belongings stuff = Dungeon.hero.belongings;
+		
+		if (primaryValue instanceof Class && 
+			stuff.getItem( (Class<? extends Item>)primaryValue ) != null) {
+				
+			bundle.put( QUICKSLOT1, ((Class<?>)primaryValue).getName() );
+		}
+		if (QuickSlot.secondaryValue instanceof Class &&
+			stuff.getItem( (Class<? extends Item>)secondaryValue ) != null &&
+			Toolbar.secondQuickslot()) {
+					
+			bundle.put( QUICKSLOT2, ((Class<?>)secondaryValue).getName() );
+		}
+	}
+	
+	public static void save( Bundle bundle, Item item ) {
+		if (item == primaryValue) {
+			bundle.put( QuickSlot.QUICKSLOT1, true );
+		}
+		if (item == secondaryValue && Toolbar.secondQuickslot()) {
+			bundle.put( QuickSlot.QUICKSLOT2, true );
+		}
+	}
+	
+	public static void restore( Bundle bundle ) {
+		primaryValue = null;
+		secondaryValue = null;
+		
+		String qsClass = bundle.getString( QUICKSLOT1 );
+		if (qsClass != null) {
+			try {
+				primaryValue = Class.forName( qsClass );
+			} catch (ClassNotFoundException e) {
+			}
+		}
+		
+		qsClass = bundle.getString( QUICKSLOT2 );
+		if (qsClass != null) {
+			try {
+				secondaryValue = Class.forName( qsClass );
+			} catch (ClassNotFoundException e) {
+			}
+		}
+	}
+	
+	public static void restore( Bundle bundle, Item item ) {
+		if (bundle.getBoolean( QUICKSLOT1 )) {
+			primaryValue = item;
+		}
+		if (bundle.getBoolean( QUICKSLOT2 )) {
+			secondaryValue = item;
+		}
+	}
+	
+	public static void compress() {
+		if ((primaryValue == null && secondaryValue != null) ||
+			(primaryValue == secondaryValue)) {
+				
+			primaryValue = secondaryValue;
+			secondaryValue = null;
 		}
 	}
 }

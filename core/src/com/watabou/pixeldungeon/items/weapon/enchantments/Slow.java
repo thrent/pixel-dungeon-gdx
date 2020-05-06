@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import com.watabou.utils.Random;
 
 public class Slow extends Weapon.Enchantment {
 
-	private static final String TXT_CHILLING = "Chilling %s";
+	private static final String TXT_CHILLING = "chilling %s";
 	
 	private static ItemSprite.Glowing BLUE = new ItemSprite.Glowing( 0x0044FF );
 	
@@ -35,7 +35,7 @@ public class Slow extends Weapon.Enchantment {
 		// lvl 0 - 25%
 		// lvl 1 - 40%
 		// lvl 2 - 50%
-		int level = Math.max( 0, weapon.level );
+		int level = Math.max( 0, weapon.effectiveLevel() );
 		
 		if (Random.Int( level + 4 ) >= 3) {
 			

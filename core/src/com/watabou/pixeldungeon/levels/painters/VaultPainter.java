@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@ public class VaultPainter extends Painter {
 	public static void paint( Level level, Room room ) {
 
 		fill( level, room, Terrain.WALL );
-		fill( level, room, 1, Terrain.EMPTY );
+		fill( level, room, 1, Terrain.EMPTY_SP );
+		fill( level, room, 2, Terrain.EMPTY );
 		
 		int cx = (room.left + room.right) / 2;
 		int cy = (room.top + room.bottom) / 2;

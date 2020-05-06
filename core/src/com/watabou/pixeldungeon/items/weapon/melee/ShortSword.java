@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,13 +55,17 @@ public class ShortSword extends MeleeWeapon {
 		super( 1, 1f, 1f );
 		
 		STR = 11;
-		MAX = 12;
+	}
+	
+	@Override
+	protected int max0() {
+		return 12;
 	}
 	
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (level > 0) {
+		if (level() > 0) {
 			actions.add( AC_REFORGE );
 		}
 		return actions;

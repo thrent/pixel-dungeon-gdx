@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ import com.watabou.pixeldungeon.items.wands.Wand;
 import com.watabou.pixeldungeon.scenes.PixelScene;
 import com.watabou.pixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 
 public class Badges {
 	
@@ -75,7 +76,7 @@ public class Badges {
 		DEATH_FROM_POISON( "Death from poison", 25 ),
 		DEATH_FROM_GAS( "Death from toxic gas", 26 ),
 		DEATH_FROM_HUNGER( "Death from hunger", 27 ),
-		DEATH_FROM_GLYPH( "Death from a glyph", 57 ),
+		DEATH_FROM_GLYPH( "Death from an enchantment", 57 ),
 		DEATH_FROM_FALLING( "Death from falling down", 59 ),
 		YASD( "Death from fire, poison, toxic gas & hunger", 34, true ),
 		BOSS_SLAIN_1_WARRIOR,
@@ -169,6 +170,8 @@ public class Badges {
 	
 	private static boolean saveNeeded = false;
 	
+	public static Callback loadingListener = null;
+	
 	public static void reset() {
 		local.clear();
 		loadGlobal();
@@ -196,7 +199,7 @@ public class Badges {
 	
 	private static void store( Bundle bundle, HashSet<Badge> badges ) {
 		int count = 0;
-		String names[] = new String[global.size()];
+		String names[] = new String[badges.size()];
 		
 		for (Badge badge:badges) {
 			names[count++] = badge.toString();
@@ -228,9 +231,12 @@ public class Badges {
 	}
 	
 	public static void saveGlobal() {
+		
+		Bundle bundle = null;
+		
 		if (saveNeeded) {
 			
-			Bundle bundle = new Bundle();
+			bundle = new Bundle();
 			store( bundle, global );
 			
 			try {
@@ -396,28 +402,28 @@ public class Badges {
 	public static void validateItemLevelAquired( Item item ) {
 		
 		// This method should be called:
-		// 1) When an item is obtained (Item.collect)
-		// 2) When an item is upgraded (ScrollOfUpgrade, ScrollOfWeaponUpgrade, ShortSword, WandOfMagicMissile)
-		// 3) When an item is identified
+		// 1) When an item gets obtained (Item.collect)
+		// 2) When an item gets upgraded (ScrollOfUpgrade, ScrollOfWeaponUpgrade, ShortSword, WandOfMagicMissile)
+		// 3) When an item gets identified
 		if (!item.levelKnown) {
 			return;
 		}
 		
 		Badge badge = null;
 		
-		if (!local.contains( Badge.ITEM_LEVEL_1 ) && item.level >= 3) {
+		if (!local.contains( Badge.ITEM_LEVEL_1 ) && item.level() >= 3) {
 			badge = Badge.ITEM_LEVEL_1;
 			local.add( badge );
 		}
-		if (!local.contains( Badge.ITEM_LEVEL_2 ) && item.level >= 6) {
+		if (!local.contains( Badge.ITEM_LEVEL_2 ) && item.level() >= 6) {
 			badge = Badge.ITEM_LEVEL_2;
 			local.add( badge );
 		}
-		if (!local.contains( Badge.ITEM_LEVEL_3 ) && item.level >= 9) {
+		if (!local.contains( Badge.ITEM_LEVEL_3 ) && item.level() >= 9) {
 			badge = Badge.ITEM_LEVEL_3;
 			local.add( badge );
 		}
-		if (!local.contains( Badge.ITEM_LEVEL_4 ) && item.level >= 12) {
+		if (!local.contains( Badge.ITEM_LEVEL_4 ) && item.level() >= 12) {
 			badge = Badge.ITEM_LEVEL_4;
 			local.add( badge );
 		}
@@ -889,11 +895,11 @@ public class Badges {
 		
 		HashSet<Badge> filtered = new HashSet<Badge>( global ? Badges.global : Badges.local );
 		
-		if (!global) {
+		{
 			Iterator<Badge> iterator = filtered.iterator();
 			while (iterator.hasNext()) {
 				Badge badge = iterator.next();
-				if (badge.meta) {
+				if ((!global && badge.meta) || badge.image == -1) {
 					iterator.remove();
 				}
 			}
@@ -912,7 +918,13 @@ public class Badges {
 		leaveBest( filtered, Badge.DEATH_FROM_GAS, Badge.YASD );
 		leaveBest( filtered, Badge.DEATH_FROM_HUNGER, Badge.YASD );
 		leaveBest( filtered, Badge.DEATH_FROM_POISON, Badge.YASD );
+		leaveBest( filtered, Badge.ALL_POTIONS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED );
+		leaveBest( filtered, Badge.ALL_SCROLLS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED );
+		leaveBest( filtered, Badge.ALL_RINGS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED );
+		leaveBest( filtered, Badge.ALL_WANDS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED );
 		leaveBest( filtered, Badge.VICTORY, Badge.VICTORY_ALL_CLASSES );
+		leaveBest( filtered, Badge.VICTORY, Badge.HAPPY_END );
+ 		leaveBest( filtered, Badge.VICTORY, Badge.CHAMPION );
 		leaveBest( filtered, Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4 );
 		
 		ArrayList<Badge> list = new ArrayList<Badge>( filtered );

@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ public class ResultDescriptions {
 	// Items
 	public static final String WAND		= "Killed by your own %s on level %d";
 	public static final String GLYPH	= "Killed by the %s on level %d";
+	public static final String BOMB		= "Killed by an explosion of a bomb on level %d";
 	
 	// Dungeon features
 	public static final String TRAP	= "Killed by discharge of %s on level %d";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,17 @@
 
 package com.watabou.noosa.audio;
 
+///* gdx fork code
 import com.badlogic.gdx.Gdx;
+//*/
 import com.badlogic.gdx.audio.Sound;
+
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import com.watabou.noosa.Game;
 
 import java.util.HashMap;
 
@@ -51,8 +60,10 @@ public enum Sample {
 		}
 	}
 	
+	private LinkedList<String> loadingQueue = new LinkedList<String>();
+	
 	public void load( String... assets ) {
-		
+		///* old gdx code:
 		for (int i=0; i < assets.length; i++) {
 			
 			String asset = assets[i];
@@ -60,9 +71,41 @@ public enum Sample {
 			if (!ids.containsKey( asset )) {
 				ids.put(asset, Gdx.audio.newSound(Gdx.files.internal(asset)));
 			}
-			
 		}
+		//*/
+		// for (String asset : assets) {
+		// 	loadingQueue.add( asset );
+		// }
+		// loadNext();
 	}
+	
+	// private void loadNext() {
+	// 	final String asset = loadingQueue.poll();
+	// 	if (asset != null) {
+	// 		if (!ids.containsKey( asset )) {
+	// 			try {
+	// 				pool.setOnLoadCompleteListener( new SoundPool.OnLoadCompleteListener() {
+	// 					@Override
+	// 					public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+	// 						loadNext();
+	// 					}
+	// 				} );
+					
+	// 				AssetManager manager = Game.instance.getAssets();
+	// 				AssetFileDescriptor fd = manager.openFd( asset );
+	// 				int streamID = pool.load( fd, 1 ) ;
+	// 				ids.put( asset, streamID );
+	// 				fd.close();
+	// 			} catch (IOException e) {
+	// 				loadNext();
+	// 			} catch (NullPointerException e) {
+	// 				// Do nothing (stop loading sounds)
+	// 			}
+	// 		} else {
+	// 			loadNext();
+	// 		}
+	// 	}
+	// }
 	
 	public void unload( Object src ) {
 		

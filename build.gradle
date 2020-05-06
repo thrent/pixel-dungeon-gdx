@@ -5,7 +5,7 @@ buildscript {
         maven { url 'https://github.com/steffenschaefer/gwt-gradle-plugin/raw/maven-repo/' }
     }
     dependencies {
-        classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.4'
+        //classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.4'
         classpath 'com.android.tools.build:gradle:0.12.2'
         classpath 'com.github.jtakakura:gradle-robovm-plugin:0.0.10'
     }
@@ -15,7 +15,7 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
 
-    version = '1.7.2a-1'
+    version = '1.9.1'
     ext {
         versionCode = 59
         appName = 'pixel-dungeon'
@@ -43,53 +43,6 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
-    }
-}
-
-project(":android") {
-    apply plugin: "android"
-
-    configurations { natives }
-
-    dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-    }
-}
-
-project(":ios") {
-    apply plugin: "java"
-    apply plugin: "robovm"
-
-    configurations { natives }
-
-    dependencies {
-        compile project(":core")
-        compile "org.robovm:robovm-rt:${roboVMVersion}"
-        compile "org.robovm:robovm-cocoatouch:${roboVMVersion}"
-        compile "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
-    }
-}
-
-project(":html") {
-    apply plugin: "gwt"
-    apply plugin: "war"
-
-
-    dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
-        compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
-        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion:sources"
-        compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion:sources"
     }
 }
 

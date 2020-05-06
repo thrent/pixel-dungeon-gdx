@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import com.watabou.pixeldungeon.actors.buffs.Poison;
 import com.watabou.pixeldungeon.items.Generator;
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.watabou.pixeldungeon.items.weapon.Weapon;
-import com.watabou.pixeldungeon.items.weapon.Weapon.Enchantment;
 import com.watabou.pixeldungeon.items.weapon.enchantments.Death;
 import com.watabou.pixeldungeon.items.weapon.enchantments.Leech;
 import com.watabou.pixeldungeon.items.weapon.melee.MeleeWeapon;
@@ -52,10 +51,10 @@ public class Statue extends Mob {
 		
 		do {
 			weapon = (Weapon)Generator.random( Generator.Category.WEAPON );
-		} while (!(weapon instanceof MeleeWeapon) || weapon.level < 0);
+		} while (!(weapon instanceof MeleeWeapon) || weapon.level() < 0);
 		
 		weapon.identify();
-		weapon.enchant( Enchantment.random() );
+		weapon.enchant();
 		
 		HP = HT = 15 + Dungeon.depth * 5;
 		defenseSkill = 4 + Dungeon.depth;
@@ -85,7 +84,7 @@ public class Statue extends Mob {
 	
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange( weapon.MIN, weapon.MAX );
+		return Random.NormalIntRange( weapon.min(), weapon.max() );
 	}
 	
 	@Override
@@ -121,6 +120,7 @@ public class Statue extends Mob {
 	
 	@Override
 	public void beckon( int cell ) {
+		// Do nothing
 	}
 	
 	@Override

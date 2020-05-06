@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,14 +43,19 @@ public class WndItem extends Window {
 		IconTitle titlebar = new IconTitle();
 		titlebar.icon( new ItemSprite( item.image(), item.glowing() ) );
 		titlebar.label( Utils.capitalize( item.toString() ) );
+		if (item.isUpgradable() && item.levelKnown) {
+			titlebar.health( (float)item.durability() / item.maxDurability() );
+		}
 		titlebar.setRect( 0, 0, WIDTH, 0 );
 		add( titlebar );
 		
-		if (item.levelKnown && item.level > 0) {
-			titlebar.color( ItemSlot.UPGRADED );
-		} else if (item.levelKnown && item.level < 0) {
-			titlebar.color( ItemSlot.DEGRADED );
-		}	
+		if (item.levelKnown) {
+			if (item.level() < 0) {
+				titlebar.color( ItemSlot.DEGRADED );				
+			} else if (item.level() > 0) {
+				titlebar.color( item.isBroken() ? ItemSlot.WARNING : ItemSlot.UPGRADED );				
+			}
+		}
 		
 		BitmapTextMultiline info = PixelScene.createMultiline( item.info(), 6 );
 		info.maxWidth = WIDTH;
@@ -80,6 +85,10 @@ public class WndItem extends Window {
 				}
 				btn.setPos( x, y );
 				add( btn );
+				
+				if (action == item.defaultAction) {
+					btn.textColor( TITLE_COLOR );
+				}
 				
 				x += btn.width() + GAP;
 			}

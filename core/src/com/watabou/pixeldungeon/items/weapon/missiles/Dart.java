@@ -1,6 +1,6 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2014  Oleg Dolya
+ * Copyright (C) 2012-2015 Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,6 @@ public class Dart extends MissileWeapon {
 	{
 		name = "dart";
 		image = ItemSpriteSheet.DART;
-		
-		MIN = 1;
-		MAX = 4;
 	}
 	
 	public Dart() {
@@ -38,6 +35,16 @@ public class Dart extends MissileWeapon {
 	public Dart( int number ) {
 		super();
 		quantity = number;
+	}
+	
+	@Override
+	public int min() {
+		return 1;
+	}
+	
+	@Override
+	public int max() {
+		return 4;
 	}
 	
 	@Override
