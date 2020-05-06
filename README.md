@@ -9,6 +9,9 @@ This fork is focused on the desktop versions, therefore I don't intend to mainta
 
 Quickstart
 ----------
+Download the jar from [here](https://github.com/nojus297/pixel-dungeon-gdx/releases) or build yourself. 
+
+**Building**
  - `./gradlew desktop:run` to run.
  - `./gradlew desktop:run` to compile a jar file (located in `desktop/build/libs/` folder.
 
