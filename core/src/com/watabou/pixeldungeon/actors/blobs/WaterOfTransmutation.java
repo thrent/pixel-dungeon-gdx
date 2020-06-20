@@ -18,6 +18,7 @@
 package com.watabou.pixeldungeon.actors.blobs;
 
 import com.watabou.pixeldungeon.Journal;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.Journal.Feature;
 import com.watabou.pixeldungeon.effects.BlobEmitter;
 import com.watabou.pixeldungeon.effects.Speck;
@@ -57,6 +58,7 @@ public class WaterOfTransmutation extends WellWater {
 		}
 		
 		if (item != null) {
+			Statistics.floor_stats.itemTransmuted ++;
 			Journal.remove( Feature.WELL_OF_TRANSMUTATION );
 		}
 		

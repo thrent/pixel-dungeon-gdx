@@ -24,6 +24,7 @@ import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.Badges;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.Journal;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
 import com.watabou.pixeldungeon.actors.hero.Hero;
@@ -200,6 +201,8 @@ public class Blacksmith extends NPC {
 			first = item1;
 			second = item2;
 		}
+		
+		Statistics.floor_stats.questCompleted ++;
 
 		Sample.INSTANCE.play( Assets.SND_EVOKE );
 		ScrollOfUpgrade.upgrade( Dungeon.hero );
@@ -304,6 +307,7 @@ public class Blacksmith extends NPC {
 		
 		public static void spawn( Collection<Room> rooms ) {
 			if (!spawned && Dungeon.depth > 11 && Random.Int( 15 - Dungeon.depth ) == 0) {
+				Statistics.floor_stats.questSpawned ++;
 				
 				Room blacksmith = null;
 				for (Room r : rooms) {

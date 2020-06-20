@@ -219,6 +219,10 @@ public class InterlevelScene extends PixelScene {
 		}
 		
 		Level level;
+		if(Dungeon.depth >= 1) {
+			Statistics.updateStatsTilesMapped();
+		}
+		
 		if (Dungeon.depth >= Statistics.deepestFloor) {
 			level = Dungeon.newLevel();
 		} else {

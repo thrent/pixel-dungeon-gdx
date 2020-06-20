@@ -20,6 +20,7 @@ package com.watabou.pixeldungeon.actors.buffs;
 import com.watabou.pixeldungeon.Badges;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.ResultDescriptions;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.actors.hero.HeroClass;
 import com.watabou.pixeldungeon.items.rings.RingOfSatiety;
@@ -67,8 +68,10 @@ public class Hunger extends Buff implements Hero.Doom {
 					
 					GLog.n( TXT_STARVING );
 					hero.damage( 1, this );
+					Statistics.floor_stats.damageFromHunger++;
 					
 					hero.interrupt();
+					
 				}
 			} else {	
 				

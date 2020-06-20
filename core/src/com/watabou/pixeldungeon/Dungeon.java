@@ -148,12 +148,15 @@ public class Dungeon {
 	
 	public static Level newLevel() {
 		
+        Statistics.updateClassifierStats();
+		
 		Dungeon.level = null;
 		Actor.clear();
 		
 		depth++;
 		if (depth > Statistics.deepestFloor) {
 			Statistics.deepestFloor = depth;
+			Statistics.floor_stats.deepestFloor = depth;
 			
 			if (Statistics.qualifiedForNoKilling) {
 				Statistics.completedWithNoKilling = true;

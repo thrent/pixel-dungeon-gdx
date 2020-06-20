@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.watabou.pixeldungeon.Bones;
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.mobs.Bestiary;
 import com.watabou.pixeldungeon.actors.mobs.Mob;
@@ -330,7 +331,9 @@ public abstract class RegularLevel extends Level {
 	}
 	
 	protected int nTraps() {
-		return Dungeon.depth <= 1 ? 0 : Random.Int( 1, rooms.size() + Dungeon.depth );
+		int count = Dungeon.depth <= 1 ? 0 : Random.Int( 1, rooms.size() + Dungeon.depth );
+		Statistics.floor_stats.trapCount = count;
+		return count;
 	}
 	
 	protected float[] trapChances() {

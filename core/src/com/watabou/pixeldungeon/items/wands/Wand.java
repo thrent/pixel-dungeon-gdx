@@ -23,6 +23,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.Badges;
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
@@ -138,6 +139,10 @@ public abstract class Wand extends KindOfWeapon {
 	
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
+		
+		Statistics.floor_stats.wandUsed++;
+		
+		
 		ArrayList<String> actions = super.actions( hero );
 		if (curCharges > 0 || !curChargeKnown) {
 			actions.add( AC_ZAP );

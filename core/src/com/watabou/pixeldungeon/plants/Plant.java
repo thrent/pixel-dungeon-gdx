@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.buffs.Barkskin;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
@@ -120,6 +121,9 @@ public class Plant implements Bundlable {
 		
 		@Override
 		protected void onThrow( int cell ) {
+			
+			Statistics.floor_stats.seedUsed++;
+			
 			if (Dungeon.level.map[cell] == Terrain.ALCHEMY || Level.pit[cell]) {
 				super.onThrow( cell );
 			} else {
@@ -128,7 +132,8 @@ public class Plant implements Bundlable {
 		}
 		
 		@Override
-		public void execute( Hero hero, String action ) {
+		public void execute( Hero hero, String action ) {			
+			
 			if (action.equals( AC_PLANT )) {
 							
 				hero.spend( TIME_TO_PLANT );

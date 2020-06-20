@@ -30,6 +30,7 @@ import com.watabou.pixeldungeon.Bones;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.GamesInProgress;
 import com.watabou.pixeldungeon.ResultDescriptions;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.buffs.Barkskin;
@@ -680,6 +681,8 @@ public class Hero extends Char {
 			
 			if (theKey != null) {
 				
+				Statistics.floor_stats.keyUsed ++;
+				
 				spend( Key.TIME_TO_UNLOCK );
 				sprite.operate( doorCell );
 				
@@ -867,6 +870,7 @@ public class Hero extends Char {
 	
 	@Override
 	public void damage( int dmg, Object src ) {		
+		Statistics.floor_stats.damageReceived += dmg;
 		restoreHealth = false;
 		super.damage( dmg, src );
 		
@@ -1153,11 +1157,13 @@ public class Hero extends Char {
 		
 		Ankh ankh = (Ankh)belongings.getItem( Ankh.class );
 		if (ankh == null) {
-			
+			Statistics.floor_stats.deathInFloor ++;
+			Statistics.updateStatsTilesMapped();
+			Statistics.updateClassifierStats();
 			reallyDie( cause );
 			
 		} else {
-			
+			Statistics.floor_stats.deathInFloor ++;
 			Dungeon.deleteGame( Dungeon.hero.heroClass, false );
 			GameScene.show( new WndResurrect( ankh, cause ) );
 			
@@ -1294,6 +1300,10 @@ public class Hero extends Char {
 	
 	public boolean search( boolean intentional ) {
 		
+		if(intentional){
+			Statistics.floor_stats.searchDone ++;
+		}
+		
 		boolean smthFound = false;
 		
 		int positive = 0;
@@ -1362,6 +1372,7 @@ public class Hero extends Char {
 						if (heap != null && heap.type == Type.HIDDEN) {
 							heap.open( this );
 							smthFound = true;
+							Statistics.floor_stats.foundSomething ++;
 						}
 					}
 				}
@@ -1370,6 +1381,7 @@ public class Hero extends Char {
 
 		
 		if (intentional) {
+			
 			sprite.showStatus( CharSprite.DEFAULT, TXT_SEARCH );
 			sprite.operate( pos );
 			if (smthFound) {
@@ -1381,6 +1393,7 @@ public class Hero extends Char {
 		}
 		
 		if (smthFound) {
+			Statistics.floor_stats.foundSomethingRandomly ++;
 			GLog.w( TXT_NOTICED_SMTH );
 			Sample.INSTANCE.play( Assets.SND_SECRET );
 			interrupt();

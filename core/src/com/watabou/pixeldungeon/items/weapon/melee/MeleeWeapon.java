@@ -18,6 +18,7 @@
 package com.watabou.pixeldungeon.items.weapon.melee;
 
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.items.Item;
 import com.watabou.pixeldungeon.items.weapon.Weapon;
 import com.watabou.pixeldungeon.utils.Utils;
@@ -54,6 +55,10 @@ public class MeleeWeapon extends Weapon {
 	@Override
 	public int max() {
 		return isBroken() ? max0() : max0() + level() * tier;
+	}
+	
+	public int averageDamage( Hero owner ) {
+		return (int)(min() + (max() - min()) / 2);
 	}
 	
 	@Override

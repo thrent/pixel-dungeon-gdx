@@ -15,9 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
+
 package com.watabou.pixeldungeon;
 
+
 import com.watabou.utils.Bundle;
+
+import java.io.BufferedWriter;
+import java.io.File;  // Import the File class
+import java.io.IOException;  // Import the IOException class to handle errors
+import java.io.PrintWriter;
+import java.io.FileWriter; 
+
+import com.watabou.pixeldungeon.levels.Level;
+import com.watabou.pixeldungeon.levels.RegularLevel;
 
 public class Statistics {
 	
@@ -36,7 +47,10 @@ public class Statistics {
 	public static boolean completedWithNoKilling = false;
 	
 	public static boolean amuletObtained = false;
-	
+
+	public static FloorStatistics floor_stats = new FloorStatistics();
+	public static GameStatistics game_stats = new GameStatistics();
+
 	public static void reset() {
 		
 		goldCollected	= 0;
@@ -53,6 +67,11 @@ public class Statistics {
 		qualifiedForNoKilling = false;
 		
 		amuletObtained = false;
+		
+		floor_stats.init();
+		game_stats.reset();
+		
+		createClassifierStats();
 		
 	}
 	
@@ -93,4 +112,436 @@ public class Statistics {
 		amuletObtained	= bundle.getBoolean( AMULET );
 	}
 
+	public static void createClassifierStats() {		
+		
+		try(FileWriter fw = new FileWriter("GameLog_Statistics.txt", true);
+			    BufferedWriter bw = new BufferedWriter(fw);
+			    PrintWriter out = new PrintWriter(bw))
+			{
+			    out.println("dungeonLength, dungeonHeight, dungeonWidth, highestAverageWeaponDamage,"
+			    		+ " keyUsed, questSpawned, questCompleted, floorDuration, "
+			    		+ "unexploredTilesRatio, seedUsed, scrollUsed, potionUsed, "
+			    		+ "throwingWeaponUsed, wandUsed, damageFromHunger, brokenItem,"
+			    		+ " highestArmorResistance, turnSpentLowHP, turnSpentHighHP, "
+			    		+ "deepestFloor, goldCollected, Strength, Class, SearchDone,"
+			    		+ "Foundsomething, FoundsometingRandomly");
+			} catch (IOException e) {
+			    //exception handling left as an exercise for the reader
+			}
+	}
+	
+	public static void updateClassifierStats() {
+		
+		floor_stats.deepestFloor = deepestFloor;		
+		
+		updateStatsMap();
+		
+			
+		try(FileWriter fw = new FileWriter("GameLog_Statistics.txt", true);
+			    BufferedWriter bw = new BufferedWriter(fw);
+			    PrintWriter out = new PrintWriter(bw))
+			{
+			String sentence = floor_stats.dungeonLength + ","+ floor_stats.dungeonHeight + ","+ 
+			floor_stats.dungeonWidth + ","+ floor_stats.highestAverageWeaponDamage + ","+ floor_stats.keyUsed+ ","+
+			floor_stats.questSpawned + ","+ floor_stats.questCompleted + ","+ 
+			floor_stats.floorDuration + ","+ floor_stats.unexploredTilesRatio+ ","+ 
+			floor_stats.seedUsed  + ","+  floor_stats.scrollUsed + ","+ 
+			floor_stats.potionUsed + ","+ floor_stats.throwingWeaponUsed + ","+ 
+			floor_stats.wandUsed + ","+ floor_stats.damageFromHunger + ","+ 
+			floor_stats.brokenItem + ","+ floor_stats.highestArmorResistance + ","+ 
+			floor_stats.turnSpentLowHP + ","+ floor_stats.turnSpentHighHP + ","+ 
+			floor_stats.deepestFloor + ","+ floor_stats.goldCollected + ","+ 
+			floor_stats.Strength + ","+ floor_stats.heroClass +","+ 
+			floor_stats.searchDone + ","+ floor_stats.foundSomething + ","+
+			floor_stats.foundSomethingRandomly;
+			
+			    out.println(sentence);
+			} catch (IOException e) {
+			    //exception handling left as an exercise for the reader
+			}
+	}
+	
+	public static void updateStatsTilesMapped() {
+		
+		int unexploredCount = 0;
+		int explorableTiles = 0;
+		int length = Level.LENGTH;
+		boolean[] mapped = Dungeon.level.mapped;
+		boolean[] discoverable = Level.discoverable;
+
+		
+		for (int i=0; i < length; i++) {
+			
+			if (discoverable[i] == true) {
+				explorableTiles ++;
+				boolean visible = Dungeon.level.visited[i] || Dungeon.level.mapped[i];
+				
+				if (!visible) {				
+					unexploredCount ++;
+				}
+			}
+		}
+
+		floor_stats.unexploredTilesRatio = (int)(100 *unexploredCount / explorableTiles);
+	}
+	
+public static void updateStatsMap() {
+
+		floor_stats.dungeonHeight = Level.HEIGHT;
+		floor_stats.dungeonWidth = Level.WIDTH;
+		floor_stats.dungeonLength = Level.LENGTH;
+		// floor_stats.roomCount = RegularLevel.rooms.size;
+		// floor_stats.hiddenDoorCount = RegularLevel.getSecretDoors();
+	}
+
+
+	public static class FloorStatistics {
+
+		// Content
+		public int keySpawned;
+		public int keyUsed;
+		public int questSpawned;
+		public int questCompleted;
+		public int itemTransmuted;
+		public int potionCooked;
+		public int barricadeBurned;
+		// map
+		public int specialRoomCount;
+		public int hiddenDoorCount;
+		public int trapCount;
+		public int dungeonWidth;
+		public int dungeonHeight;
+		public int dungeonLength;
+		public int roomCount;
+		public int distanceFromEntranceToExit;
+		public int floorDuration;
+		public int unexploredTilesRatio; // May be hard to implement
+		// Used items
+		public int seedUsed;
+		public int scrollUsed;
+		public int potionUsed;
+		public int throwingWeaponUsed;
+		public int wandUsed;
+		public int foodUsed;		
+		// Resource scarcity
+		public int damageFromHunger;
+		public int brokenItem;
+		public int spawnedItemCount;
+		// Equipped gear
+		public int highestArmorResistance;
+		public int highestAverageWeaponDamage;
+		// Combat
+		public int turnSpentLowHP;
+		public int turnSpentHighHP;
+		public int mobSlain;
+		public int damageReceived;
+		public int deathInFloor;
+		// Stats
+		public int deepestFloor;
+		public int goldCollected;
+		public int Level;
+		public int Strength;
+		public String heroClass;
+		public static int maxHP;
+		// Actions 
+		public int searchDone;
+		public int foundSomething;
+		public int foundSomethingRandomly;
+
+		public void init() {
+
+			// Content
+			keySpawned = 0;
+			keyUsed = 0;
+			questSpawned = 0;
+			questCompleted = 0;
+			itemTransmuted = 0;
+			potionCooked = 0;
+			barricadeBurned = 0;
+			
+			// map
+			specialRoomCount = 0;
+			hiddenDoorCount = 0;
+			trapCount = 0;
+			dungeonWidth = 0;
+			dungeonHeight = 0;
+			dungeonLength = 0;
+			roomCount = 0;
+			distanceFromEntranceToExit = 0;
+			floorDuration = 0;
+			unexploredTilesRatio = 0; 
+			
+			// Used items
+			seedUsed = 0;
+			scrollUsed = 0;
+			potionUsed = 0;
+			throwingWeaponUsed = 0;
+			wandUsed = 0;
+			foodUsed = 0;	
+			
+			// Resource scarcity
+			damageFromHunger = 0;
+			brokenItem = 0;
+			spawnedItemCount = 0;
+			
+			// Equipped gear
+			highestArmorResistance = 0;
+			highestAverageWeaponDamage = 0;
+			
+			// Challenge
+			turnSpentLowHP = 0;
+			turnSpentHighHP = 0;
+			mobSlain = 0;
+			damageReceived = 0;
+			deathInFloor = 0;
+			
+			// status
+			deepestFloor = 0;
+			goldCollected = 0;
+			Level = 0;
+			Strength = 0;
+			if(heroClass ==  null) {
+				heroClass = "Unknown";
+			}
+			maxHP = 0;
+			
+			// Actions 
+			searchDone = 0;
+			foundSomething = 0;
+			foundSomethingRandomly = 0;
+
+		}
+
+		public void reset() {
+
+			// Content
+			keySpawned = 0;
+			keyUsed = 0;
+			questSpawned = 0;
+			questCompleted = 0;
+			itemTransmuted = 0;
+			potionCooked = 0;
+			barricadeBurned = 0;
+			
+			// map
+			specialRoomCount = 0;
+			hiddenDoorCount = 0;
+			trapCount = 0;
+			dungeonWidth = 0;
+			dungeonHeight = 0;
+			dungeonLength = 0;
+			roomCount = 0;
+			distanceFromEntranceToExit = 0;
+			floorDuration = 0;
+			unexploredTilesRatio = 0; 
+			
+			// Used items
+			seedUsed = 0;
+			scrollUsed = 0;
+			potionUsed = 0;
+			throwingWeaponUsed = 0;
+			wandUsed = 0;
+			foodUsed = 0;	
+			
+			// Resource scarcity
+			damageFromHunger = 0;
+			brokenItem = 0;
+			spawnedItemCount = 0;
+			// Equipped gear
+			
+			// No need to reset these stats
+			
+			// Challenge
+			turnSpentLowHP = 0;
+			turnSpentHighHP = 0;
+			mobSlain = 0;
+			damageReceived = 0;
+			deathInFloor = 0;
+			
+			// status			
+			goldCollected = 0;
+			
+			// Actions 
+			searchDone = 0;
+			foundSomething = 0;
+			foundSomethingRandomly = 0;
+
+		}
+	}
+
+	public static class GameStatistics {
+		// Contains the sum of all the floor statistics gathered over the course of the current game
+		public FloorStatistics previousFloorStats = floor_stats;
+
+		// Content
+		public int keySpawned;
+		public int keyUsed;
+		public int questSpawned;
+		public int questCompleted;
+		public int itemTransmuted;
+		public int potionCooked;
+		public int barricadeBurned;
+		// map
+		public int averageSpecialRoomCount;
+		public int averageHiddenDoorCount;
+		public int averageTrapCount;
+		public int averageDungeonWidth;
+		public int averageDungeonHeight;
+		public int averageDungeonLength;
+		public int averageRoomCount;
+		public int averageDistanceFromEntranceToExit;
+		public int gameDuration;
+		public int averageUnexploredTilesRatio;
+		// Used items
+		public int seedUsed;
+		public int scrollUsed;
+		public int potionUsed;
+		public int throwingWeaponUsed;
+		public int wandUsed;
+		public int foodUsed;		
+		// Resource scarcity
+		public int damageFromHunger;
+		public int brokenItem;
+		public int averageSpawnedItemCount;
+		// Equipped gear
+		public int highestArmorResistance;
+		public int highestAverageWeaponDamage;
+		// Combat
+		public int turnSpentLowHP;
+		public int turnSpentHighHP;
+		public int mobSlain;
+		public int damageReceived;
+		public int deathCount;
+		// Stats
+		public int deepestFloor;
+		public int goldCollected;
+		public int Level;
+		public int Strength;
+		public String heroClass;
+		public static int maxHP;
+		// Actions 
+		public int searchDone;
+		public int foundSomething;
+		public int foundSomethingRandomly;
+
+
+
+		public void reset() {
+
+			// Content
+			keySpawned = 0;
+			keyUsed = 0;
+			questSpawned = 0;
+			questCompleted = 0;
+			itemTransmuted = 0;
+			potionCooked = 0;
+			barricadeBurned = 0;
+			// map
+			averageSpecialRoomCount = 0;
+			averageHiddenDoorCount = 0;
+			averageTrapCount = 0;
+			averageDungeonWidth = 0;
+			averageDungeonHeight = 0;
+			averageDungeonLength = 0;
+			averageRoomCount = 0;
+			averageDistanceFromEntranceToExit = 0;
+			gameDuration = 0;
+			averageUnexploredTilesRatio = 0; 
+			// Used items
+			seedUsed = 0;
+			scrollUsed = 0;
+			potionUsed = 0;
+			throwingWeaponUsed = 0;
+			wandUsed = 0;
+			foodUsed = 0;	
+			// Resource scarcity
+			damageFromHunger = 0;
+			brokenItem = 0;
+			averageSpawnedItemCount = 0;
+			// Equipped gear
+			highestArmorResistance = 0;
+			highestAverageWeaponDamage = 0;
+			// Challenge
+			turnSpentLowHP = 0;
+			turnSpentHighHP = 0;
+			mobSlain = 0;
+			damageReceived = 0;
+			deathCount = 0;
+			// status
+			deepestFloor = 0;
+			goldCollected = 0;
+			Level = 0;
+			Strength = 0;
+			if(heroClass ==  null) {
+				heroClass = "Unknown";
+			}
+			
+			maxHP = 0;
+			// Actions 
+			searchDone = 0;
+			foundSomething = 0;
+			foundSomethingRandomly = 0;
+
+		}
+
+		public void updateFromFloorStats(FloorStatistics floorStats) {
+			
+			previousFloorStats = floorStats;
+			
+			// Content
+			keySpawned += floorStats.keySpawned;
+			keyUsed += floorStats.keyUsed;
+			questSpawned += floorStats.questSpawned;
+			questCompleted += floorStats.questCompleted;
+			itemTransmuted += floorStats.itemTransmuted;
+			potionCooked += floorStats.potionCooked;
+			barricadeBurned += floorStats.barricadeBurned;
+			// map
+			averageSpecialRoomCount += floorStats.specialRoomCount;
+			averageHiddenDoorCount += floorStats.hiddenDoorCount;
+			averageTrapCount += floorStats.trapCount;
+			averageDungeonWidth += floorStats.dungeonWidth;
+			averageDungeonHeight += floorStats.dungeonHeight;
+			averageDungeonLength += floorStats.dungeonLength;
+			averageRoomCount += floorStats.roomCount;
+			averageDistanceFromEntranceToExit += floorStats.distanceFromEntranceToExit;
+			gameDuration += floorStats.floorDuration;
+			averageUnexploredTilesRatio += floorStats.unexploredTilesRatio; 
+			// Used items
+			seedUsed += floorStats.seedUsed;
+			scrollUsed += floorStats.scrollUsed;
+			potionUsed += floorStats.potionUsed;
+			throwingWeaponUsed += floorStats.throwingWeaponUsed;
+			wandUsed += floorStats.wandUsed;
+			foodUsed += floorStats.foodUsed;	
+			// Resource scarcity
+			damageFromHunger += floorStats.damageFromHunger;
+			brokenItem += floorStats.brokenItem;
+			averageSpawnedItemCount += floorStats.spawnedItemCount;
+			// Equipped gear
+			highestArmorResistance += floorStats.highestArmorResistance;
+			highestAverageWeaponDamage += floorStats.highestAverageWeaponDamage;
+			// Challenge
+			turnSpentLowHP += floorStats.turnSpentLowHP;
+			turnSpentHighHP += floorStats.turnSpentHighHP;
+			mobSlain += floorStats.mobSlain;
+			damageReceived += floorStats.damageReceived;
+			deathCount += floorStats.deathInFloor;
+			// status
+			deepestFloor = floorStats.deepestFloor;
+			goldCollected += floorStats.goldCollected;
+			Level = floorStats.Level;
+			Strength = floorStats.Strength;
+			heroClass = floorStats.heroClass;			
+			maxHP = floorStats.maxHP;
+			// Actions 
+			searchDone += floorStats.searchDone;
+			foundSomething += floorStats.foundSomething;
+			foundSomethingRandomly += floorStats.foundSomethingRandomly;
+			
+			floorStats.reset();
+
+		}
+	}
 }
+

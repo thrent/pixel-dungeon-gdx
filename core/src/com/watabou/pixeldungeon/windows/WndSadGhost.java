@@ -18,6 +18,7 @@
 package com.watabou.pixeldungeon.windows;
 
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.actors.mobs.npcs.Ghost;
 import com.watabou.pixeldungeon.items.Item;
@@ -56,6 +57,7 @@ public class WndSadGhost extends WndQuest {
 		ghost.yell( "Farewell, adventurer!" );
 		ghost.die( null );
 		
+		Statistics.floor_stats.questCompleted ++;
 		Ghost.Quest.complete();
 	}
 }

@@ -148,6 +148,10 @@ abstract public class Weapon extends KindOfWeapon {
 		return damage;
 	}
 	
+	public int averageDamage( Hero owner ) {
+		return (int)(min() + (max() - min()) / 2);
+	}
+	
 	public Item upgrade( boolean enchant ) {		
 		if (enchantment != null) {
 			if (!enchant && Random.Int( level() ) > 0) {

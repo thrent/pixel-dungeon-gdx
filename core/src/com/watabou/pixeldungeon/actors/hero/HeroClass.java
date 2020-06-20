@@ -19,6 +19,7 @@ package com.watabou.pixeldungeon.actors.hero;
 
 import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.Badges;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.items.TomeOfMastery;
 import com.watabou.pixeldungeon.items.armor.ClothArmor;
 import com.watabou.pixeldungeon.items.bags.Keyring;
@@ -103,6 +104,15 @@ public enum HeroClass {
 			break;
 		}
 		
+		Statistics.floor_stats.Strength = hero.STR;
+		Statistics.floor_stats.maxHP = hero.HT;
+		Statistics.floor_stats.heroClass = hero.className();
+		Statistics.floor_stats.highestArmorResistance = 2;
+		Statistics.floor_stats.highestAverageWeaponDamage = hero.belongings.weapon.averageDamage(hero);
+		
+		
+		
+		
 		if (Badges.isUnlocked( masteryBadge() )) {
 			new TomeOfMastery().collect();
 		}
@@ -171,6 +181,7 @@ public enum HeroClass {
 		(hero.belongings.weapon = new Dagger()).identify();
 		Boomerang boomerang = new Boomerang();
 		boomerang.identify().collect();
+		
 		
 		QuickSlot.primaryValue = boomerang;
 	}

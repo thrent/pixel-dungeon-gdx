@@ -19,9 +19,13 @@ package com.watabou.pixeldungeon.items.scrolls;
 
 import com.watabou.pixeldungeon.Badges;
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.effects.Speck;
 import com.watabou.pixeldungeon.items.Item;
+import com.watabou.pixeldungeon.items.armor.Armor;
+import com.watabou.pixeldungeon.items.wands.Wand;
+import com.watabou.pixeldungeon.items.weapon.Weapon;
 import com.watabou.pixeldungeon.utils.GLog;
 import com.watabou.pixeldungeon.windows.WndBag;
 
@@ -43,6 +47,21 @@ public class ScrollOfUpgrade extends InventoryScroll {
 			item.fix();
 		} else {
 			item.upgrade();
+			
+			if (item instanceof Weapon) {
+				if (Statistics.floor_stats.highestAverageWeaponDamage < Dungeon.hero.belongings.weapon.averageDamage(Dungeon.hero)) {
+					Statistics.floor_stats.highestAverageWeaponDamage = Dungeon.hero.belongings.weapon.averageDamage(Dungeon.hero);
+				}
+				
+			} else if (item instanceof Armor) {
+				if (Statistics.floor_stats.highestArmorResistance < ((Armor) item).DR()) {
+					Statistics.floor_stats.highestArmorResistance = ((Armor) item).DR();
+				}
+			} else if (item instanceof Wand) {
+				
+			}
+			
+			
 		}
 		
 		upgrade( curUser );

@@ -13,6 +13,6 @@ Download the jar from [here](https://github.com/nojus297/pixel-dungeon-gdx/relea
 
 **Building**
  - `./gradlew desktop:run` to run.
- - `./gradlew desktop:run` to compile a jar file (located in `desktop/build/libs/` folder.
+ - `./gradlew desktop:dist` to compile a jar file (located in `desktop/build/libs/` folder.
 
 For more info about gradle tasks: https://github.com/libgdx/libgdx/wiki/Gradle-on-the-Commandline

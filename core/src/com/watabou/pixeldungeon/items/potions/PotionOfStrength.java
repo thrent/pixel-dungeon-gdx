@@ -18,6 +18,7 @@
 package com.watabou.pixeldungeon.items.potions;
 
 import com.watabou.pixeldungeon.Badges;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.sprites.CharSprite;
 import com.watabou.pixeldungeon.utils.GLog;
@@ -35,6 +36,7 @@ public class PotionOfStrength extends Potion {
 		hero.STR++;
 		hero.sprite.showStatus( CharSprite.POSITIVE, "+1 str" );
 		GLog.p( "Newfound strength surges through your body." );
+		Statistics.floor_stats.Strength = hero.STR;
 		
 		Badges.validateStrengthAttained();
 	}

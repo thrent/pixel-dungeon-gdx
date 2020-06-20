@@ -25,6 +25,7 @@ import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.Challenges;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.Journal;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
@@ -242,6 +243,8 @@ public class Ghost extends NPC {
 		
 		public static void spawn( SewerLevel level ) {
 			if (!spawned && Dungeon.depth > 1 && Random.Int( 5 - Dungeon.depth ) == 0) {
+				
+				Statistics.floor_stats.questSpawned ++;
 				
 				Ghost ghost = new Ghost();
 				do {

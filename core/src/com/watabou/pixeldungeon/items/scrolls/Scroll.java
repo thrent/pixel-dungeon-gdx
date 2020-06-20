@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import com.watabou.pixeldungeon.Badges;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.buffs.Blindness;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.items.Item;
@@ -106,6 +107,10 @@ public abstract class Scroll extends Item {
 	
 	@Override
 	public void execute( Hero hero, String action ) {
+		
+		Statistics.floor_stats.scrollUsed++;
+		
+		
 		if (action.equals( AC_READ )) {
 			
 			if (hero.buff( Blindness.class ) != null) {

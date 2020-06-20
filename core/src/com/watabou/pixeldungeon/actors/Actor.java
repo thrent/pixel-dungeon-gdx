@@ -118,6 +118,14 @@ public abstract class Actor implements Bundlable {
 		
 		if (Dungeon.hero != null && all.contains( Dungeon.hero )) {
 			Statistics.duration += now;
+			Statistics.floor_stats.floorDuration += now;
+			
+			if(Dungeon.hero.HP <= (int)(Dungeon.hero.HT/3)) {
+				Statistics.floor_stats.turnSpentLowHP += now;
+			}
+			else if(Dungeon.hero.HP >= (int)(3*Dungeon.hero.HT/4)) {
+				Statistics.floor_stats.turnSpentHighHP += now;
+			}
 		}
 		
 		float min = Float.MAX_VALUE;

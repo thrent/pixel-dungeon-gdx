@@ -309,6 +309,7 @@ public class Heap implements Bundlable {
 				destroy();
 				
 				Statistics.potionsCooked++;
+				Statistics.floor_stats.potionCooked ++;
 				Badges.validatePotionsCooked();
 				
 				return Generator.random( Generator.Category.POTION );

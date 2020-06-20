@@ -332,6 +332,7 @@ public abstract class Mob extends Char {
 
 			if (hostile) {
 				Statistics.enemiesSlain++;
+				Statistics.floor_stats.mobSlain ++;
 				Badges.validateMonstersSlain();
 				Statistics.qualifiedForNoKilling = false;
 				

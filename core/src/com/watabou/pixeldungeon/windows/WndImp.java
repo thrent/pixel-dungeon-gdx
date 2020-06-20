@@ -19,6 +19,7 @@ package com.watabou.pixeldungeon.windows;
 
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.actors.mobs.npcs.Imp;
 import com.watabou.pixeldungeon.items.Item;
@@ -84,7 +85,7 @@ public class WndImp extends Window {
 		}
 		
 		imp.flee();
-		
+		Statistics.floor_stats.questCompleted ++;		
 		Imp.Quest.complete();
 	}
 }

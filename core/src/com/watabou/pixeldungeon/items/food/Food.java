@@ -87,6 +87,7 @@ public class Food extends Item {
 			hero.spend( TIME_TO_EAT );
 			
 			Statistics.foodEaten++;
+			Statistics.floor_stats.foodUsed++;
 			Badges.validateFoodEaten();
 			
 		} else {

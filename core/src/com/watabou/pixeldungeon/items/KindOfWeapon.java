@@ -19,8 +19,10 @@ package com.watabou.pixeldungeon.items;
 
 import java.util.ArrayList;
 
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.hero.Hero;
+import com.watabou.pixeldungeon.items.armor.Armor;
 import com.watabou.pixeldungeon.ui.QuickSlot;
 import com.watabou.pixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
@@ -51,6 +53,9 @@ abstract public class KindOfWeapon extends EquipableItem {
 		if (hero.belongings.weapon == null || hero.belongings.weapon.doUnequip( hero, true )) {
 			
 			hero.belongings.weapon = this;
+			if (Statistics.floor_stats.highestAverageWeaponDamage < hero.belongings.weapon.averageDamage(hero)) {
+				Statistics.floor_stats.highestAverageWeaponDamage = hero.belongings.weapon.averageDamage(hero);
+			}
 			activate( hero );
 			
 			QuickSlot.refresh();
@@ -93,6 +98,10 @@ abstract public class KindOfWeapon extends EquipableItem {
 	
 	public int damageRoll( Hero owner ) {
 		return Random.NormalIntRange( min(), max() );
+	}
+	
+	public int averageDamage( Hero owner ) {
+		return (int)(min() + (max() - min()) / 2);
 	}
 	
 	public float acuracyFactor( Hero hero ) {

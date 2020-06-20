@@ -18,6 +18,7 @@
 package com.watabou.pixeldungeon.windows;
 
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.watabou.pixeldungeon.items.Item;
@@ -63,7 +64,7 @@ public class WndWandmaker extends WndQuest {
 		wandmaker.destroy();
 		
 		wandmaker.sprite.die();
-		
+		Statistics.floor_stats.questCompleted ++;		
 		Wandmaker.Quest.complete();
 	}
 }

@@ -20,6 +20,7 @@ package com.watabou.pixeldungeon.items.weapon.missiles;
 import java.util.ArrayList;
 
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.hero.Hero;
@@ -55,6 +56,10 @@ abstract public class MissileWeapon extends Weapon {
 
 	@Override
 	protected void onThrow( int cell ) {
+		
+		Statistics.floor_stats.throwingWeaponUsed++;
+		
+		
 		Char enemy = Actor.findChar( cell );
 		if (enemy == null || enemy == curUser) {
 			super.onThrow( cell );

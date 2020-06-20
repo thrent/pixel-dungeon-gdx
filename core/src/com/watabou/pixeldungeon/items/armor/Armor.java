@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.watabou.pixeldungeon.Badges;
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.items.EquipableItem;
@@ -96,6 +97,9 @@ public class Armor extends EquipableItem {
 		if (hero.belongings.armor == null || hero.belongings.armor.doUnequip( hero, true, false )) {
 			
 			hero.belongings.armor = this;
+			if (Statistics.floor_stats.highestArmorResistance < hero.belongings.armor.DR()) {
+				Statistics.floor_stats.highestArmorResistance = hero.belongings.armor.DR();
+			}
 			
 			cursedKnown = true;
 			if (cursed) {

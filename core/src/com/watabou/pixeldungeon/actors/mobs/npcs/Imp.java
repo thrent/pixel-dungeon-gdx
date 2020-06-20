@@ -19,6 +19,7 @@ package com.watabou.pixeldungeon.actors.mobs.npcs;
 
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.Journal;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
@@ -212,6 +213,7 @@ public class Imp extends NPC {
 		public static void spawn( CityLevel level, Room room ) {
 			if (!spawned && Dungeon.depth > 16 && Random.Int( 20 - Dungeon.depth ) == 0) {
 				
+				Statistics.floor_stats.questSpawned ++;
 				Imp npc = new Imp();
 				do {
 					npc.pos = level.randomRespawnCell();
