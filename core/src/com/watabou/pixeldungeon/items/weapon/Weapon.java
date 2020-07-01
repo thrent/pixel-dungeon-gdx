@@ -148,7 +148,7 @@ abstract public class Weapon extends KindOfWeapon {
 		return damage;
 	}
 	
-	public int averageDamage( Hero owner ) {
+	public int averageDamage() {
 		return (int)(min() + (max() - min()) / 2);
 	}
 	

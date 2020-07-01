@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 import com.watabou.noosa.Game;
+import com.watabou.pixeldungeon.Statistics.FloorStatistics;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.buffs.Amok;
@@ -146,9 +147,13 @@ public class Dungeon {
 		return (challenges & mask) != 0;
 	}
 	
-	public static Level newLevel() {
+	public static Level newLevel() {		
 		
-        Statistics.updateClassifierStats();
+        
+        if(Statistics.floor_stats.deepestFloor != 0) {
+        	Statistics.updateClassifierStats();
+        	Statistics.game_stats.updateFromFloorStats(Statistics.floor_stats);
+        }        
 		
 		Dungeon.level = null;
 		Actor.clear();

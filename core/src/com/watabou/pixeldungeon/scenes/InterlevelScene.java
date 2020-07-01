@@ -238,6 +238,11 @@ public class InterlevelScene extends PixelScene {
 		Dungeon.saveLevel();
 		
 		Level level;
+		
+		if(Dungeon.depth >= 1) {
+			Statistics.updateStatsTilesMapped();
+		}
+		
 		if (Dungeon.depth >= Statistics.deepestFloor) {
 			level = Dungeon.newLevel();
 		} else {

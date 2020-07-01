@@ -86,6 +86,7 @@ public class Statistics {
 	private static final String DURATION	= "duration";
 	private static final String AMULET		= "amuletObtained";
 	
+	
 	public static void storeInBundle( Bundle bundle ) {
 		bundle.put( GOLD,		goldCollected );
 		bundle.put( DEEPEST,	deepestFloor );
@@ -99,6 +100,7 @@ public class Statistics {
 		bundle.put( AMULET,		amuletObtained );
 	}
 	
+	
 	public static void restoreFromBundle( Bundle bundle ) {
 		goldCollected	= bundle.getInt( GOLD );
 		deepestFloor	= bundle.getInt( DEEPEST );
@@ -111,6 +113,7 @@ public class Statistics {
 		duration		= bundle.getFloat( DURATION );
 		amuletObtained	= bundle.getBoolean( AMULET );
 	}
+	
 
 	public static void createClassifierStats() {		
 		
@@ -120,40 +123,44 @@ public class Statistics {
 			{
 			    out.println("dungeonLength, dungeonHeight, dungeonWidth, highestAverageWeaponDamage,"
 			    		+ " keyUsed, questSpawned, questCompleted, floorDuration, "
-			    		+ "unexploredTilesRatio, seedUsed, scrollUsed, potionUsed, "
+			    		+ "unexploredTilesRatio, seedUsed, scrollUsed, potionDrank, "
 			    		+ "throwingWeaponUsed, wandUsed, damageFromHunger, brokenItem,"
 			    		+ " highestArmorResistance, turnSpentLowHP, turnSpentHighHP, "
 			    		+ "deepestFloor, goldCollected, Strength, Class, SearchDone,"
-			    		+ "Foundsomething, FoundsometingRandomly");
+			    		+ "Foundsomething, FoundsometingRandomly, DistEntryExit, roomCount, "
+			    		+ "specialRoomCount, minRoomSize, maxRoomSize, secretDoorCount");
 			} catch (IOException e) {
 			    //exception handling left as an exercise for the reader
 			}
 	}
 	
+	
 	public static void updateClassifierStats() {
 		
 		floor_stats.deepestFloor = deepestFloor;		
 		
-		updateStatsMap();
-		
+		updateStatsMap();		
 			
 		try(FileWriter fw = new FileWriter("GameLog_Statistics.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 			{
-			String sentence = floor_stats.dungeonLength + ","+ floor_stats.dungeonHeight + ","+ 
-			floor_stats.dungeonWidth + ","+ floor_stats.highestAverageWeaponDamage + ","+ floor_stats.keyUsed+ ","+
-			floor_stats.questSpawned + ","+ floor_stats.questCompleted + ","+ 
-			floor_stats.floorDuration + ","+ floor_stats.unexploredTilesRatio+ ","+ 
-			floor_stats.seedUsed  + ","+  floor_stats.scrollUsed + ","+ 
-			floor_stats.potionUsed + ","+ floor_stats.throwingWeaponUsed + ","+ 
-			floor_stats.wandUsed + ","+ floor_stats.damageFromHunger + ","+ 
-			floor_stats.brokenItem + ","+ floor_stats.highestArmorResistance + ","+ 
-			floor_stats.turnSpentLowHP + ","+ floor_stats.turnSpentHighHP + ","+ 
-			floor_stats.deepestFloor + ","+ floor_stats.goldCollected + ","+ 
-			floor_stats.Strength + ","+ floor_stats.heroClass +","+ 
-			floor_stats.searchDone + ","+ floor_stats.foundSomething + ","+
-			floor_stats.foundSomethingRandomly;
+			String sentence = floor_stats.dungeonLength + "," + floor_stats.dungeonHeight + "," + 
+			floor_stats.dungeonWidth + "," + floor_stats.highestAverageWeaponDamage + "," + floor_stats.keyUsed+ "," +
+			floor_stats.questSpawned + "," + floor_stats.questCompleted + "," + 
+			floor_stats.floorDuration + "," + floor_stats.unexploredTilesRatio+ "," + 
+			floor_stats.seedUsed  + "," +  floor_stats.scrollUsed + "," + 
+			floor_stats.potionDrank + "," + floor_stats.throwingWeaponUsed + "," + 
+			floor_stats.wandUsed + "," + floor_stats.damageFromHunger + "," + 
+			floor_stats.brokenItem + "," + floor_stats.highestArmorResistance + "," + 
+			floor_stats.turnSpentLowHP + "," + floor_stats.turnSpentHighHP + "," + 
+			floor_stats.deepestFloor + "," + floor_stats.goldCollected + "," + 
+			floor_stats.Strength + "," + floor_stats.heroClass + "," + 
+			floor_stats.searchDone + "," + floor_stats.foundSomething + "," +
+			floor_stats.foundSomethingRandomly + "," +  floor_stats.distanceFromEntranceToExit + "," +  
+			floor_stats.roomCount  + "," +  floor_stats.specialRoomCount + "," +  
+			floor_stats.roomSizeMin  + "," +  floor_stats.roomSizeMax + "," +
+			floor_stats.hiddenDoorCount;
 			
 			    out.println(sentence);
 			} catch (IOException e) {
@@ -183,15 +190,13 @@ public class Statistics {
 		}
 
 		floor_stats.unexploredTilesRatio = (int)(100 *unexploredCount / explorableTiles);
+		floor_stats.currentFloor = Dungeon.depth;
 	}
 	
 public static void updateStatsMap() {
-
 		floor_stats.dungeonHeight = Level.HEIGHT;
 		floor_stats.dungeonWidth = Level.WIDTH;
 		floor_stats.dungeonLength = Level.LENGTH;
-		// floor_stats.roomCount = RegularLevel.rooms.size;
-		// floor_stats.hiddenDoorCount = RegularLevel.getSecretDoors();
 	}
 
 
@@ -205,6 +210,8 @@ public static void updateStatsMap() {
 		public int itemTransmuted;
 		public int potionCooked;
 		public int barricadeBurned;
+		public int wellSpawned;
+		public int wellUSed;
 		// map
 		public int specialRoomCount;
 		public int hiddenDoorCount;
@@ -216,10 +223,15 @@ public static void updateStatsMap() {
 		public int distanceFromEntranceToExit;
 		public int floorDuration;
 		public int unexploredTilesRatio; // May be hard to implement
+		public int explorableTilesCount;
+		public int roomSizeMin;
+		public int roomSizeMax;
+		
 		// Used items
 		public int seedUsed;
 		public int scrollUsed;
-		public int potionUsed;
+		public int potionThrown;
+		public int potionDrank;
 		public int throwingWeaponUsed;
 		public int wandUsed;
 		public int foodUsed;		
@@ -238,6 +250,7 @@ public static void updateStatsMap() {
 		public int deathInFloor;
 		// Stats
 		public int deepestFloor;
+		public int currentFloor;
 		public int goldCollected;
 		public int Level;
 		public int Strength;
@@ -247,6 +260,7 @@ public static void updateStatsMap() {
 		public int searchDone;
 		public int foundSomething;
 		public int foundSomethingRandomly;
+		public int attackCount;
 
 		public void init() {
 
@@ -258,6 +272,8 @@ public static void updateStatsMap() {
 			itemTransmuted = 0;
 			potionCooked = 0;
 			barricadeBurned = 0;
+			wellSpawned = 0;
+			wellUSed = 0;
 			
 			// map
 			specialRoomCount = 0;
@@ -270,11 +286,15 @@ public static void updateStatsMap() {
 			distanceFromEntranceToExit = 0;
 			floorDuration = 0;
 			unexploredTilesRatio = 0; 
+			explorableTilesCount = 0;
+			roomSizeMin = 0;
+			roomSizeMax = 0;
 			
 			// Used items
 			seedUsed = 0;
 			scrollUsed = 0;
-			potionUsed = 0;
+			potionThrown = 0;
+			potionDrank = 0;
 			throwingWeaponUsed = 0;
 			wandUsed = 0;
 			foodUsed = 0;	
@@ -297,6 +317,7 @@ public static void updateStatsMap() {
 			
 			// status
 			deepestFloor = 0;
+			currentFloor = 0;
 			goldCollected = 0;
 			Level = 0;
 			Strength = 0;
@@ -309,6 +330,7 @@ public static void updateStatsMap() {
 			searchDone = 0;
 			foundSomething = 0;
 			foundSomethingRandomly = 0;
+			attackCount = 0;
 
 		}
 
@@ -322,6 +344,8 @@ public static void updateStatsMap() {
 			itemTransmuted = 0;
 			potionCooked = 0;
 			barricadeBurned = 0;
+			wellSpawned = 0;
+			wellUSed = 0;
 			
 			// map
 			specialRoomCount = 0;
@@ -334,11 +358,15 @@ public static void updateStatsMap() {
 			distanceFromEntranceToExit = 0;
 			floorDuration = 0;
 			unexploredTilesRatio = 0; 
+			explorableTilesCount = 0;
+			roomSizeMin = 0;
+			roomSizeMax = 0;
 			
 			// Used items
 			seedUsed = 0;
 			scrollUsed = 0;
-			potionUsed = 0;
+			potionThrown = 0;
+			potionDrank = 0;
 			throwingWeaponUsed = 0;
 			wandUsed = 0;
 			foodUsed = 0;	
@@ -365,13 +393,15 @@ public static void updateStatsMap() {
 			searchDone = 0;
 			foundSomething = 0;
 			foundSomethingRandomly = 0;
+			attackCount = 0;
 
 		}
 	}
 
 	public static class GameStatistics {
 		// Contains the sum of all the floor statistics gathered over the course of the current game
-		public FloorStatistics previousFloorStats = floor_stats;
+		public FloorStatistics[] floorStatsArray = new FloorStatistics[26];
+
 
 		// Content
 		public int keySpawned;
@@ -381,6 +411,8 @@ public static void updateStatsMap() {
 		public int itemTransmuted;
 		public int potionCooked;
 		public int barricadeBurned;
+		public int wellSpawned;
+		public int wellUSed;
 		// map
 		public int averageSpecialRoomCount;
 		public int averageHiddenDoorCount;
@@ -392,10 +424,14 @@ public static void updateStatsMap() {
 		public int averageDistanceFromEntranceToExit;
 		public int gameDuration;
 		public int averageUnexploredTilesRatio;
+		public int explorableTilesCount;
+		public int roomSizeMin;
+		public int roomSizeMax;
 		// Used items
 		public int seedUsed;
 		public int scrollUsed;
-		public int potionUsed;
+		public int potionThrown;
+		public int potionDrank;
 		public int throwingWeaponUsed;
 		public int wandUsed;
 		public int foodUsed;		
@@ -414,6 +450,7 @@ public static void updateStatsMap() {
 		public int deathCount;
 		// Stats
 		public int deepestFloor;
+		public int currentFloor;
 		public int goldCollected;
 		public int Level;
 		public int Strength;
@@ -423,10 +460,13 @@ public static void updateStatsMap() {
 		public int searchDone;
 		public int foundSomething;
 		public int foundSomethingRandomly;
+		public int attackCount;
 
 
 
 		public void reset() {
+			
+			floorStatsArray[0] = floor_stats;
 
 			// Content
 			keySpawned = 0;
@@ -436,6 +476,8 @@ public static void updateStatsMap() {
 			itemTransmuted = 0;
 			potionCooked = 0;
 			barricadeBurned = 0;
+			wellSpawned = 0;
+			wellUSed = 0;
 			// map
 			averageSpecialRoomCount = 0;
 			averageHiddenDoorCount = 0;
@@ -447,10 +489,14 @@ public static void updateStatsMap() {
 			averageDistanceFromEntranceToExit = 0;
 			gameDuration = 0;
 			averageUnexploredTilesRatio = 0; 
+			explorableTilesCount = 0;
+			roomSizeMin = 0;
+			roomSizeMax = 0;
 			// Used items
 			seedUsed = 0;
 			scrollUsed = 0;
-			potionUsed = 0;
+			potionThrown = 0;
+			potionDrank = 0;
 			throwingWeaponUsed = 0;
 			wandUsed = 0;
 			foodUsed = 0;	
@@ -469,6 +515,7 @@ public static void updateStatsMap() {
 			deathCount = 0;
 			// status
 			deepestFloor = 0;
+			currentFloor = 0;
 			goldCollected = 0;
 			Level = 0;
 			Strength = 0;
@@ -481,12 +528,13 @@ public static void updateStatsMap() {
 			searchDone = 0;
 			foundSomething = 0;
 			foundSomethingRandomly = 0;
+			attackCount = 0;
 
 		}
 
 		public void updateFromFloorStats(FloorStatistics floorStats) {
 			
-			previousFloorStats = floorStats;
+			floorStatsArray[currentFloor] = floorStats;
 			
 			// Content
 			keySpawned += floorStats.keySpawned;
@@ -496,6 +544,8 @@ public static void updateStatsMap() {
 			itemTransmuted += floorStats.itemTransmuted;
 			potionCooked += floorStats.potionCooked;
 			barricadeBurned += floorStats.barricadeBurned;
+			wellSpawned += floorStats.wellSpawned;
+			wellUSed += floorStats.wellUSed;
 			// map
 			averageSpecialRoomCount += floorStats.specialRoomCount;
 			averageHiddenDoorCount += floorStats.hiddenDoorCount;
@@ -507,10 +557,12 @@ public static void updateStatsMap() {
 			averageDistanceFromEntranceToExit += floorStats.distanceFromEntranceToExit;
 			gameDuration += floorStats.floorDuration;
 			averageUnexploredTilesRatio += floorStats.unexploredTilesRatio; 
+			explorableTilesCount += floorStats.explorableTilesCount;
 			// Used items
 			seedUsed += floorStats.seedUsed;
 			scrollUsed += floorStats.scrollUsed;
-			potionUsed += floorStats.potionUsed;
+			potionThrown += floorStats.potionThrown;
+			potionDrank += floorStats.potionDrank;
 			throwingWeaponUsed += floorStats.throwingWeaponUsed;
 			wandUsed += floorStats.wandUsed;
 			foodUsed += floorStats.foodUsed;	
@@ -529,6 +581,7 @@ public static void updateStatsMap() {
 			deathCount += floorStats.deathInFloor;
 			// status
 			deepestFloor = floorStats.deepestFloor;
+			currentFloor = floorStats.currentFloor;
 			goldCollected += floorStats.goldCollected;
 			Level = floorStats.Level;
 			Strength = floorStats.Strength;
@@ -538,10 +591,39 @@ public static void updateStatsMap() {
 			searchDone += floorStats.searchDone;
 			foundSomething += floorStats.foundSomething;
 			foundSomethingRandomly += floorStats.foundSomethingRandomly;
+			attackCount += floorStats.attackCount;
 			
 			floorStats.reset();
 
 		}
+	
+	
+		public void generateRatios() {
+			
+		}
+		
+		public void getLevelParameters() {
+			
+			int exploration = 0;
+			
+			int dungeonWidth = 0;
+			int dungeonDepth = 0;
+			int specialRoom = 0;
+			
+			if(exploration == -1) {
+				
+			}
+			
+			else if(exploration == 0) {
+				
+			}
+			
+			if(exploration == 1) {
+				
+			}
+		}
 	}
+	
+	
 }
 

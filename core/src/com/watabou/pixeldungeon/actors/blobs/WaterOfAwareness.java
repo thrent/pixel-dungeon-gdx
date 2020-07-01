@@ -23,6 +23,7 @@ import com.watabou.pixeldungeon.Badges;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.DungeonTilemap;
 import com.watabou.pixeldungeon.Journal;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.Journal.Feature;
 import com.watabou.pixeldungeon.actors.buffs.Awareness;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
@@ -72,7 +73,9 @@ public class WaterOfAwareness extends WellWater {
 	
 		GLog.p( TXT_PROCCED );
 		
-		Journal.remove( Feature.WELL_OF_AWARENESS );
+		Journal.remove( Feature.WELL_OF_AWARENESS );		
+
+		Statistics.floor_stats.wellUSed ++;
 		
 		return true;
 	}
@@ -88,6 +91,8 @@ public class WaterOfAwareness extends WellWater {
 			emitter.parent.add( new Identification( DungeonTilemap.tileCenterToWorld( pos ) ) );
 			
 			Journal.remove( Feature.WELL_OF_AWARENESS );
+			
+			Statistics.floor_stats.wellUSed ++;
 			
 			return item;
 		}

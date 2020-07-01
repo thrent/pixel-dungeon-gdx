@@ -20,6 +20,7 @@ package com.watabou.pixeldungeon.items.potions;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.blobs.Blob;
 import com.watabou.pixeldungeon.actors.blobs.ParalyticGas;
 import com.watabou.pixeldungeon.actors.blobs.ToxicGas;
@@ -114,6 +115,7 @@ public class PotionOfPurity extends Potion {
 		GLog.w( TXT_NO_SMELL );
 		Buff.prolong( hero, GasesImmunity.class, GasesImmunity.DURATION );
 		setKnown();
+		
 	}
 	
 	@Override

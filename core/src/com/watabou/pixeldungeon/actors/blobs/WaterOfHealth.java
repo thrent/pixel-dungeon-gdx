@@ -21,6 +21,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.Journal;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.Journal.Feature;
 import com.watabou.pixeldungeon.actors.buffs.Hunger;
 import com.watabou.pixeldungeon.actors.hero.Hero;
@@ -54,6 +55,7 @@ public class WaterOfHealth extends WellWater {
 		GLog.p( TXT_PROCCED );
 		
 		Journal.remove( Feature.WELL_OF_HEALTH );
+		Statistics.floor_stats.wellUSed ++;
 		
 		return true;
 	}
@@ -63,6 +65,7 @@ public class WaterOfHealth extends WellWater {
 		if (item instanceof DewVial && !((DewVial)item).isFull()) {
 			((DewVial)item).fill();
 			Journal.remove( Feature.WELL_OF_HEALTH );
+			Statistics.floor_stats.wellUSed ++;
 			return item;
 		}
 		

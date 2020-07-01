@@ -1033,6 +1033,8 @@ public class Hero extends Char {
 			HP += 5;			
 			attackSkill++;
 			defenseSkill++;
+
+			Statistics.floor_stats.maxHP = HT;
 			
 			if (lvl < 10) {
 				updateAwareness();
@@ -1154,16 +1156,16 @@ public class Hero extends Char {
 		
 		Actor.fixTime();
 		super.die( cause );
+		Statistics.floor_stats.deathInFloor ++;
 		
 		Ankh ankh = (Ankh)belongings.getItem( Ankh.class );
 		if (ankh == null) {
-			Statistics.floor_stats.deathInFloor ++;
+			
 			Statistics.updateStatsTilesMapped();
 			Statistics.updateClassifierStats();
 			reallyDie( cause );
 			
-		} else {
-			Statistics.floor_stats.deathInFloor ++;
+		} else {			
 			Dungeon.deleteGame( Dungeon.hero.heroClass, false );
 			GameScene.show( new WndResurrect( ankh, cause ) );
 			
@@ -1371,8 +1373,7 @@ public class Hero extends Char {
 						Heap heap = Dungeon.level.heaps.get( p );
 						if (heap != null && heap.type == Type.HIDDEN) {
 							heap.open( this );
-							smthFound = true;
-							Statistics.floor_stats.foundSomething ++;
+							smthFound = true;							
 						}
 					}
 				}
@@ -1385,6 +1386,7 @@ public class Hero extends Char {
 			sprite.showStatus( CharSprite.DEFAULT, TXT_SEARCH );
 			sprite.operate( pos );
 			if (smthFound) {
+				Statistics.floor_stats.foundSomething ++;
 				spendAndNext( Random.Float() < level ? TIME_TO_SEARCH : TIME_TO_SEARCH * 2 );
 			} else {
 				spendAndNext( TIME_TO_SEARCH );

@@ -19,6 +19,7 @@ package com.watabou.pixeldungeon.levels.painters;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.blobs.WaterOfAwareness;
 import com.watabou.pixeldungeon.actors.blobs.WaterOfHealth;
 import com.watabou.pixeldungeon.actors.blobs.WaterOfTransmutation;
@@ -58,5 +59,7 @@ public class MagicWellPainter extends Painter {
 		level.blobs.put( waterClass, water );
 		
 		room.entrance().set( Room.Door.Type.REGULAR );
+		
+		Statistics.floor_stats.wellSpawned ++;
 	}
 }

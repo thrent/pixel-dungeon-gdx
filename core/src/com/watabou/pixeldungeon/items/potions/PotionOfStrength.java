@@ -38,7 +38,7 @@ public class PotionOfStrength extends Potion {
 		GLog.p( "Newfound strength surges through your body." );
 		Statistics.floor_stats.Strength = hero.STR;
 		
-		Badges.validateStrengthAttained();
+		Badges.validateStrengthAttained();		
 	}
 	
 	@Override

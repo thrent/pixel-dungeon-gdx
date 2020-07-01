@@ -77,6 +77,13 @@ public abstract class RegularLevel extends Level {
 			
 		} while (distance < minDistance);
 		
+
+		Statistics.floor_stats.distanceFromEntranceToExit = distance;
+		Statistics.floor_stats.roomCount = rooms.size();
+		Statistics.floor_stats.roomSizeMin = minRoomSize;
+		Statistics.floor_stats.roomSizeMax = maxRoomSize;
+		
+		
 		roomEntrance.type = Type.ENTRANCE;
 		roomExit.type = Type.EXIT;
 		
@@ -137,12 +144,15 @@ public abstract class RegularLevel extends Level {
 		}
 		assignRoomType();
 		
+		Statistics.floor_stats.roomCount = rooms.size();
+		
 		paint();
 		paintWater();
 		paintGrass();
 		
 		placeTraps();
 		
+		Statistics.floor_stats.hiddenDoorCount = secretDoors;
 		return true;
 	}
 	
@@ -167,6 +177,7 @@ public abstract class RegularLevel extends Level {
 	protected void assignRoomType() {
 		
 		int specialRooms = 0;
+		specials.remove( Type.ALTAR ); // The altar is bugged
 		
 		for (Room r : rooms) {
 			if (r.type == Type.NULL && 
@@ -181,6 +192,7 @@ public abstract class RegularLevel extends Level {
 						r.type = Type.PIT;
 						pitRoomNeeded = false;
 
+						/**
 						specials.remove( Type.ARMORY );
 						specials.remove( Type.CRYPT );
 						specials.remove( Type.LABORATORY );
@@ -188,6 +200,7 @@ public abstract class RegularLevel extends Level {
 						specials.remove( Type.STATUE );
 						specials.remove( Type.TREASURY );
 						specials.remove( Type.VAULT );
+						**/
 						specials.remove( Type.WEAK_FLOOR );
 						
 					} else if (Dungeon.depth % 5 == 2 && specials.contains( Type.LABORATORY )) {
@@ -248,6 +261,8 @@ public abstract class RegularLevel extends Level {
 				count++;
 			}
 		}
+		
+		Statistics.floor_stats.specialRoomCount = specialRooms;
 	}
 	
 	protected void paintWater() {
@@ -293,6 +308,7 @@ public abstract class RegularLevel extends Level {
 	protected void placeTraps() {
 		
 		int nTraps = nTraps();
+		Statistics.floor_stats.trapCount = nTraps;
 		float[] trapChances = trapChances();
 		
 		for (int i=0; i < nTraps; i++) {
@@ -343,7 +359,7 @@ public abstract class RegularLevel extends Level {
 	
 	protected int minRoomSize = 7;
 	protected int maxRoomSize = 9;
-	
+		
 	protected void split( Rect rect ) {
 		
 		int w = rect.width();
@@ -456,6 +472,7 @@ public abstract class RegularLevel extends Level {
 			case HIDDEN:
 				map[door] = Terrain.SECRET_DOOR;
 				secretDoors++;
+				Statistics.floor_stats.hiddenDoorCount ++;
 				break;
 			case BARRICADE:
 				map[door] = Random.Int( 3 ) == 0 ? Terrain.BOOKSHELF : Terrain.BARRICADE;

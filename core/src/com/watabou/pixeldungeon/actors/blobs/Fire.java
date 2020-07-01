@@ -18,6 +18,7 @@
 package com.watabou.pixeldungeon.actors.blobs;
 
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
@@ -26,6 +27,7 @@ import com.watabou.pixeldungeon.effects.BlobEmitter;
 import com.watabou.pixeldungeon.effects.particles.FlameParticle;
 import com.watabou.pixeldungeon.items.Heap;
 import com.watabou.pixeldungeon.levels.Level;
+import com.watabou.pixeldungeon.levels.Terrain;
 import com.watabou.pixeldungeon.scenes.GameScene;
 
 public class Fire extends Blob {
@@ -51,7 +53,10 @@ public class Fire extends Blob {
 				fire = cur[pos] - 1;
 				if (fire <= 0 && flamable[pos]) {
 					
-					int oldTile = Dungeon.level.map[pos];
+					int oldTile = Dungeon.level.map[pos];		
+					if(Dungeon.level.map[oldTile] == Terrain.BARRICADE) {
+						Statistics.floor_stats.barricadeBurned ++;
+					}
 					Dungeon.level.destroy( pos );
 					
 					observe = true;

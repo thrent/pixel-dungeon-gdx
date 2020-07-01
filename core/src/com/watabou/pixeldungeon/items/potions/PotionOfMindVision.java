@@ -18,6 +18,7 @@
 package com.watabou.pixeldungeon.items.potions;
 
 import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
 import com.watabou.pixeldungeon.actors.buffs.MindVision;
 import com.watabou.pixeldungeon.actors.hero.Hero;
@@ -34,6 +35,7 @@ public class PotionOfMindVision extends Potion {
 		setKnown();
 		Buff.affect( hero, MindVision.class, MindVision.DURATION );
 		Dungeon.observe();
+		
 		
 		if (Dungeon.level.mobs.size() > 0) {
 			GLog.i( "You can somehow feel the presence of other creatures' minds!" );

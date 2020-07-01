@@ -49,8 +49,8 @@ public class ScrollOfUpgrade extends InventoryScroll {
 			item.upgrade();
 			
 			if (item instanceof Weapon) {
-				if (Statistics.floor_stats.highestAverageWeaponDamage < Dungeon.hero.belongings.weapon.averageDamage(Dungeon.hero)) {
-					Statistics.floor_stats.highestAverageWeaponDamage = Dungeon.hero.belongings.weapon.averageDamage(Dungeon.hero);
+				if (Statistics.floor_stats.highestAverageWeaponDamage < ((Weapon)item).averageDamage()) {
+					Statistics.floor_stats.highestAverageWeaponDamage = ((Weapon)item).averageDamage();
 				}
 				
 			} else if (item instanceof Armor) {
