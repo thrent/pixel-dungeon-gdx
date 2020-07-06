@@ -25,8 +25,9 @@ import java.io.BufferedWriter;
 import java.io.File;  // Import the File class
 import java.io.IOException;  // Import the IOException class to handle errors
 import java.io.PrintWriter;
-import java.io.FileWriter; 
+import java.io.FileWriter;
 
+import com.watabou.pixeldungeon.items.keys.IronKey;
 import com.watabou.pixeldungeon.levels.Level;
 import com.watabou.pixeldungeon.levels.RegularLevel;
 
@@ -121,6 +122,7 @@ public class Statistics {
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 			{
+			/**
 			    out.println("dungeonLength, dungeonHeight, dungeonWidth, highestAverageWeaponDamage,"
 			    		+ " keyUsed, questSpawned, questCompleted, floorDuration, "
 			    		+ "unexploredTilesRatio, seedUsed, scrollUsed, potionDrank, "
@@ -129,6 +131,11 @@ public class Statistics {
 			    		+ "deepestFloor, goldCollected, Strength, Class, SearchDone,"
 			    		+ "Foundsomething, FoundsometingRandomly, DistEntryExit, roomCount, "
 			    		+ "specialRoomCount, minRoomSize, maxRoomSize, secretDoorCount");
+			    		**/
+				out.println("deepestFloor,roomCount,unexploredTilesRatio,explorableTilesCount,"
+						+ "specialRoomCount,keySpawned,keyUsed,barricadeBurned,wellSpawned,"
+						+ "wellUSed,itemTransmuted,searchDone,foundSomething,foundSomethingRandomly,"
+						+ "hiddenDoorCount,hiddenDoorFound,height,width,minRoomSize,maxRoomSize;");
 			} catch (IOException e) {
 			    //exception handling left as an exercise for the reader
 			}
@@ -145,6 +152,8 @@ public class Statistics {
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 			{
+			
+			/**
 			String sentence = floor_stats.dungeonLength + "," + floor_stats.dungeonHeight + "," + 
 			floor_stats.dungeonWidth + "," + floor_stats.highestAverageWeaponDamage + "," + floor_stats.keyUsed+ "," +
 			floor_stats.questSpawned + "," + floor_stats.questCompleted + "," + 
@@ -161,7 +170,17 @@ public class Statistics {
 			floor_stats.roomCount  + "," +  floor_stats.specialRoomCount + "," +  
 			floor_stats.roomSizeMin  + "," +  floor_stats.roomSizeMax + "," +
 			floor_stats.hiddenDoorCount;
+			**/
 			
+			String sentence = floor_stats.deepestFloor  + "," + floor_stats.roomCount + "," + 
+					floor_stats.unexploredTilesRatio  + "," + floor_stats.explorableTilesCount + "," + 
+					floor_stats.specialRoomCount  + "," + floor_stats.keySpawned + "," + 
+					floor_stats.keyUsed  + "," + floor_stats.barricadeBurned + "," + 
+					floor_stats.wellSpawned  + "," + floor_stats.wellUSed + "," + 
+					floor_stats.itemTransmuted  + "," + floor_stats.searchDone + "," + 
+					floor_stats.foundSomething  + "," + floor_stats.foundSomethingRandomly + "," + 
+					floor_stats.dungeonHeight  + "," + floor_stats.dungeonWidth + "," + 
+					floor_stats.roomSizeMin  + "," + floor_stats.roomSizeMax;
 			    out.println(sentence);
 			} catch (IOException e) {
 			    //exception handling left as an exercise for the reader
@@ -190,10 +209,11 @@ public class Statistics {
 		}
 
 		floor_stats.unexploredTilesRatio = (int)(100 *unexploredCount / explorableTiles);
+		floor_stats.explorableTilesCount = explorableTiles;
 		floor_stats.currentFloor = Dungeon.depth;
 	}
 	
-public static void updateStatsMap() {
+	public static void updateStatsMap() {
 		floor_stats.dungeonHeight = Level.HEIGHT;
 		floor_stats.dungeonWidth = Level.WIDTH;
 		floor_stats.dungeonLength = Level.LENGTH;
@@ -215,6 +235,7 @@ public static void updateStatsMap() {
 		// map
 		public int specialRoomCount;
 		public int hiddenDoorCount;
+		public int hiddenDoorFound;
 		public int trapCount;
 		public int dungeonWidth;
 		public int dungeonHeight;
@@ -278,6 +299,7 @@ public static void updateStatsMap() {
 			// map
 			specialRoomCount = 0;
 			hiddenDoorCount = 0;
+			hiddenDoorFound = 0;
 			trapCount = 0;
 			dungeonWidth = 0;
 			dungeonHeight = 0;
@@ -350,6 +372,7 @@ public static void updateStatsMap() {
 			// map
 			specialRoomCount = 0;
 			hiddenDoorCount = 0;
+			hiddenDoorFound = 0;
 			trapCount = 0;
 			dungeonWidth = 0;
 			dungeonHeight = 0;
@@ -401,6 +424,17 @@ public static void updateStatsMap() {
 	public static class GameStatistics {
 		// Contains the sum of all the floor statistics gathered over the course of the current game
 		public FloorStatistics[] floorStatsArray = new FloorStatistics[26];
+		
+		public int challengeRating;
+		public int explorationRating;
+		public int gameplayRating; // 0 for melee, 1 for ranged and 2 for magic
+		
+		public int predictedChallenge; // From -1 to +1
+		public int predictedGameplay; // From 0 to 2
+		public int predictedExploration; // From -1 to +1
+		
+		public int[] levelParameters = new int[8]; 
+		// Depth, Width, minRoomCount, minSpecialRoomCount, hiddenDoor, additionalTraps, roomMinSize, roomMaxSize
 
 
 		// Content
@@ -414,16 +448,17 @@ public static void updateStatsMap() {
 		public int wellSpawned;
 		public int wellUSed;
 		// map
-		public int averageSpecialRoomCount;
-		public int averageHiddenDoorCount;
-		public int averageTrapCount;
+		public int SpecialRoomCount;
+		public int HiddenDoorCount;
+		public int hiddenDoorFound;
+		public int TrapCount;
 		public int averageDungeonWidth;
 		public int averageDungeonHeight;
 		public int averageDungeonLength;
-		public int averageRoomCount;
+		public int RoomCount;
 		public int averageDistanceFromEntranceToExit;
 		public int gameDuration;
-		public int averageUnexploredTilesRatio;
+		public int TotalUnexploredTilesRatio;
 		public int explorableTilesCount;
 		public int roomSizeMin;
 		public int roomSizeMax;
@@ -467,6 +502,24 @@ public static void updateStatsMap() {
 		public void reset() {
 			
 			floorStatsArray[0] = floor_stats;
+			
+			challengeRating = 0;
+			explorationRating = 0;
+			gameplayRating = 0;
+			
+			predictedChallenge = 0;
+			predictedGameplay = 0;
+			predictedExploration = 0;
+			
+			// Baseline PD Level parameters
+			levelParameters[0] = 32;
+			levelParameters[1] = 32;
+			levelParameters[2] = 8;
+			levelParameters[3] = 0;
+			levelParameters[4] = 0;
+			levelParameters[5] = 0;
+			levelParameters[6] = 7;
+			levelParameters[7] = 9;
 
 			// Content
 			keySpawned = 0;
@@ -479,16 +532,17 @@ public static void updateStatsMap() {
 			wellSpawned = 0;
 			wellUSed = 0;
 			// map
-			averageSpecialRoomCount = 0;
-			averageHiddenDoorCount = 0;
-			averageTrapCount = 0;
+			SpecialRoomCount = 0;
+			HiddenDoorCount = 0;
+			hiddenDoorFound = 0;
+			TrapCount = 0;
 			averageDungeonWidth = 0;
 			averageDungeonHeight = 0;
 			averageDungeonLength = 0;
-			averageRoomCount = 0;
+			RoomCount = 0;
 			averageDistanceFromEntranceToExit = 0;
 			gameDuration = 0;
-			averageUnexploredTilesRatio = 0; 
+			TotalUnexploredTilesRatio = 0; 
 			explorableTilesCount = 0;
 			roomSizeMin = 0;
 			roomSizeMax = 0;
@@ -536,6 +590,16 @@ public static void updateStatsMap() {
 			
 			floorStatsArray[currentFloor] = floorStats;
 			
+			predictedChallenge = getChallenge();
+			predictedGameplay = getGameplay();
+			predictedExploration = getExploration();
+			
+			challengeRating += predictedChallenge;
+			gameplayRating = predictedGameplay;
+			explorationRating += predictedExploration;
+			
+			updateLevelParameters();
+			
 			// Content
 			keySpawned += floorStats.keySpawned;
 			keyUsed += floorStats.keyUsed;
@@ -547,16 +611,17 @@ public static void updateStatsMap() {
 			wellSpawned += floorStats.wellSpawned;
 			wellUSed += floorStats.wellUSed;
 			// map
-			averageSpecialRoomCount += floorStats.specialRoomCount;
-			averageHiddenDoorCount += floorStats.hiddenDoorCount;
-			averageTrapCount += floorStats.trapCount;
+			SpecialRoomCount += floorStats.specialRoomCount;
+			HiddenDoorCount += floorStats.hiddenDoorCount;
+			hiddenDoorFound += floorStats.hiddenDoorFound;
+			TrapCount += floorStats.trapCount;
 			averageDungeonWidth += floorStats.dungeonWidth;
 			averageDungeonHeight += floorStats.dungeonHeight;
 			averageDungeonLength += floorStats.dungeonLength;
-			averageRoomCount += floorStats.roomCount;
+			RoomCount += floorStats.roomCount;
 			averageDistanceFromEntranceToExit += floorStats.distanceFromEntranceToExit;
 			gameDuration += floorStats.floorDuration;
-			averageUnexploredTilesRatio += floorStats.unexploredTilesRatio; 
+			TotalUnexploredTilesRatio += floorStats.unexploredTilesRatio; 
 			explorableTilesCount += floorStats.explorableTilesCount;
 			// Used items
 			seedUsed += floorStats.seedUsed;
@@ -602,25 +667,77 @@ public static void updateStatsMap() {
 			
 		}
 		
-		public void getLevelParameters() {
+		public int getGameplay() {
+			// Run the RF Classifier functions for Gameplay.
+			return 1;
+		}
+		
+		public int getChallenge() {
+			// Run the RF Classifier functions for Challenge.
+			return 1;
+		}
+		
+		public int getExploration() {
+			// Run the RF Classifier functions for exploration.
+			return 1;
+		}
+		
+		public void updateLevelParameters() {
+		// Height, Width, minRoomCount, minSpecialRoomCount, hiddenDoor, additionalTraps, roomMinSize, roomMaxSize
 			
-			int exploration = 0;
+			levelParameters[0] = floorStatsArray[currentFloor].dungeonHeight += 3 * explorationRating;
+			levelParameters[1] = floorStatsArray[currentFloor].dungeonWidth += 3 * explorationRating;
+						
+			levelParameters[2] += explorationRating;
+			levelParameters[3] = 0;
+			levelParameters[4] = 0;
+			levelParameters[5] = challengeRating * 2;	
 			
-			int dungeonWidth = 0;
-			int dungeonDepth = 0;
-			int specialRoom = 0;
-			
-			if(exploration == -1) {
-				
+			if (gameplayRating == 1) {
+				levelParameters[6] = 9;
+				levelParameters[7] = 12;
 			}
 			
-			else if(exploration == 0) {
+			if (gameplayRating == 2) {
+				levelParameters[6] = 8;
+				levelParameters[7] = 11;
+			}	
+			
+		}
+		
+		public void getChallengeParameters() {
+			
+			int mobCount = 0;
+			int dungeonDepth = 0;	
+			
+		}
+		
+		public void getGameplayparameter() {
+			
+			String dataminedGameplay = "plop";
+			
+			int roomMin = 0;
+			int roomMax = 0;
+			int itemToAdd = 0;
+			
+			if(dataminedGameplay == "magic") {
+				roomMin = 9;
+				roomMax = 11;
 				
+				itemToAdd = 1; // Wand
+				// to add items : level.addItemToSpawn( new IronKey() )
+			}
+			else if(dataminedGameplay == "ranged") {
+				roomMin = 10;
+				roomMax = 13;
+				
+				itemToAdd = 1; // Wand				
+			}
+			else {
+				roomMin = 7;
+				roomMax = 9;
 			}
 			
-			if(exploration == 1) {
-				
-			}
 		}
 	}
 	

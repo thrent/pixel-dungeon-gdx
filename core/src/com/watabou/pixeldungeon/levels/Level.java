@@ -81,9 +81,10 @@ public abstract class Level implements Bundlable {
 		GRASS
 	};
 	
-	public static final int WIDTH = 32;
-	public static final int HEIGHT = 32;
-	public static final int LENGTH = WIDTH * HEIGHT;
+	// Removed FINAL from these variables
+	public static int WIDTH = 32;
+	public static int HEIGHT = 32;
+	public static int LENGTH = WIDTH * HEIGHT;
 	
 	public static final int[] NEIGHBOURS4 = {-WIDTH, +1, +WIDTH, -1}; 
 	public static final int[] NEIGHBOURS8 = {+1, -1, +WIDTH, -WIDTH, +1+WIDTH, +1-WIDTH, -1+WIDTH, -1-WIDTH};
@@ -96,7 +97,7 @@ public abstract class Level implements Bundlable {
 	public static boolean resizingNeeded;
 	public static int loadedMapSize;
 	
-	public int[] map;
+	public static int[] map;
 	public boolean[] visited;
 	public boolean[] mapped;
 	
@@ -146,6 +147,10 @@ public abstract class Level implements Bundlable {
 	public void create() {
 		
 		resizingNeeded = false;
+		
+		// WIDTH = Statistics.game_stats.levelParameters[0];
+		// HEIGHT = Statistics.game_stats.levelParameters[1];
+		// LENGTH = WIDTH * HEIGHT;
 		
 		map = new int[LENGTH];
 		visited = new boolean[LENGTH];

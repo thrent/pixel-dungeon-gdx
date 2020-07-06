@@ -17,6 +17,7 @@
  */
 package com.watabou.pixeldungeon.levels.painters;
 
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.items.Generator;
 import com.watabou.pixeldungeon.items.Item;
 import com.watabou.pixeldungeon.items.Heap.Type;
@@ -55,6 +56,8 @@ public class PitPainter extends Painter {
 		}
 		
 		level.drop( new IronKey(), remains ).type = Type.SKELETON;
+		Statistics.floor_stats.keySpawned ++;
+
 		
 		if (Random.Int( 5 ) == 0) {
 			level.drop( Generator.random( Generator.Category.RING ), remains );

@@ -1386,7 +1386,7 @@ public class Hero extends Char {
 			sprite.showStatus( CharSprite.DEFAULT, TXT_SEARCH );
 			sprite.operate( pos );
 			if (smthFound) {
-				Statistics.floor_stats.foundSomething ++;
+				Statistics.floor_stats.foundSomething ++;				
 				spendAndNext( Random.Float() < level ? TIME_TO_SEARCH : TIME_TO_SEARCH * 2 );
 			} else {
 				spendAndNext( TIME_TO_SEARCH );
@@ -1396,6 +1396,9 @@ public class Hero extends Char {
 		
 		if (smthFound) {
 			Statistics.floor_stats.foundSomethingRandomly ++;
+			if (Level.map[pos] == Terrain.SECRET_DOOR || Level.map[pos] == Terrain.DOOR || Level.map[pos] == Terrain.OPEN_DOOR ) {
+				Statistics.floor_stats.hiddenDoorFound ++;
+			}
 			GLog.w( TXT_NOTICED_SMTH );
 			Sample.INSTANCE.play( Assets.SND_SECRET );
 			interrupt();

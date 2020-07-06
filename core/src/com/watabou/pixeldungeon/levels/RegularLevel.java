@@ -52,6 +52,9 @@ public abstract class RegularLevel extends Level {
 	@Override
 	protected boolean build() {
 		
+		minRoomSize = Statistics.game_stats.levelParameters[6];
+		maxRoomSize = Statistics.game_stats.levelParameters[7];
+		
 		if (!initRooms()) {
 			return false;
 		}
@@ -59,6 +62,7 @@ public abstract class RegularLevel extends Level {
 		int distance;
 		int retry = 0;
 		int minDistance = (int)Math.sqrt( rooms.size() );
+		
 		do {
 			do {
 				roomEntrance = Random.element( rooms );
@@ -160,7 +164,9 @@ public abstract class RegularLevel extends Level {
 		rooms = new HashSet<Room>();
 		split( new Rect( 0, 0, WIDTH - 1, HEIGHT - 1 ) );
 		
-		if (rooms.size() < 8) {
+		int minRoomSize = Statistics.game_stats.levelParameters[2];
+		
+		if (rooms.size() < minRoomSize ) {
 			return false;
 		}
 		
@@ -177,7 +183,7 @@ public abstract class RegularLevel extends Level {
 	protected void assignRoomType() {
 		
 		int specialRooms = 0;
-		specials.remove( Type.ALTAR ); // The altar is bugged
+		// specials.remove( Type.ALTAR ); // The altar is bugged
 		
 		for (Room r : rooms) {
 			if (r.type == Type.NULL && 
@@ -348,6 +354,7 @@ public abstract class RegularLevel extends Level {
 	
 	protected int nTraps() {
 		int count = Dungeon.depth <= 1 ? 0 : Random.Int( 1, rooms.size() + Dungeon.depth );
+		count += Statistics.game_stats.levelParameters[5]; // Additional traps
 		Statistics.floor_stats.trapCount = count;
 		return count;
 	}
@@ -359,7 +366,7 @@ public abstract class RegularLevel extends Level {
 	
 	protected int minRoomSize = 7;
 	protected int maxRoomSize = 9;
-		
+	
 	protected void split( Rect rect ) {
 		
 		int w = rect.width();

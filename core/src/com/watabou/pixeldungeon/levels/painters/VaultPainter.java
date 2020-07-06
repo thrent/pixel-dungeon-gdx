@@ -17,6 +17,7 @@
  */
 package com.watabou.pixeldungeon.levels.painters;
 
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.items.Generator;
 import com.watabou.pixeldungeon.items.Item;
 import com.watabou.pixeldungeon.items.Heap.Type;
@@ -44,6 +45,7 @@ public class VaultPainter extends Painter {
 		case 0:
 			level.drop( prize( level ), c ).type = Type.LOCKED_CHEST;
 			level.addItemToSpawn( new GoldenKey() );
+			Statistics.floor_stats.keySpawned ++;
 			break;
 			
 		case 1:
@@ -55,6 +57,7 @@ public class VaultPainter extends Painter {
 			level.drop( i1, c ).type = Type.CRYSTAL_CHEST;
 			level.drop( i2, c + Level.NEIGHBOURS8[Random.Int( 8 )]).type = Type.CRYSTAL_CHEST;
 			level.addItemToSpawn( new GoldenKey() );
+			Statistics.floor_stats.keySpawned ++;
 			break;
 			
 		case 2:
@@ -65,6 +68,7 @@ public class VaultPainter extends Painter {
 		
 		room.entrance().set( Room.Door.Type.LOCKED );
 		level.addItemToSpawn( new IronKey() );
+		Statistics.floor_stats.keySpawned ++;
 	}
 	
 	private static Item prize( Level level ) {
