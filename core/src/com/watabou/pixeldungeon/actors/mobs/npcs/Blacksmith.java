@@ -202,7 +202,7 @@ public class Blacksmith extends NPC {
 			second = item2;
 		}
 		
-		Statistics.floor_stats.questCompleted ++;
+		Statistics.floorStats.questCompleted ++;
 
 		Sample.INSTANCE.play( Assets.SND_EVOKE );
 		ScrollOfUpgrade.upgrade( Dungeon.hero );
@@ -307,7 +307,7 @@ public class Blacksmith extends NPC {
 		
 		public static void spawn( Collection<Room> rooms ) {
 			if (!spawned && Dungeon.depth > 11 && Random.Int( 15 - Dungeon.depth ) == 0) {
-				Statistics.floor_stats.questSpawned ++;
+				Statistics.floorStats.questSpawned ++;
 				
 				Room blacksmith = null;
 				for (Room r : rooms) {

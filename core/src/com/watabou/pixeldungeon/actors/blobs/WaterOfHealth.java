@@ -55,7 +55,7 @@ public class WaterOfHealth extends WellWater {
 		GLog.p( TXT_PROCCED );
 		
 		Journal.remove( Feature.WELL_OF_HEALTH );
-		Statistics.floor_stats.wellUSed ++;
+		Statistics.floorStats.wellUSed ++;
 		
 		return true;
 	}
@@ -65,7 +65,7 @@ public class WaterOfHealth extends WellWater {
 		if (item instanceof DewVial && !((DewVial)item).isFull()) {
 			((DewVial)item).fill();
 			Journal.remove( Feature.WELL_OF_HEALTH );
-			Statistics.floor_stats.wellUSed ++;
+			Statistics.floorStats.wellUSed ++;
 			return item;
 		}
 		

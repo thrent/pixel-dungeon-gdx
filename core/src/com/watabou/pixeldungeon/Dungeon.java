@@ -150,18 +150,23 @@ public class Dungeon {
 	public static Level newLevel() {		
 		
         
-        if(Statistics.floor_stats.deepestFloor != 0) {
-        	Statistics.updateClassifierStats();
-        	Statistics.game_stats.updateFromFloorStats(Statistics.floor_stats);
+        if(Statistics.floorStats.deepestFloor != 0) {
+        	Statistics.updateLogFile();
+        	Statistics.gameStats.updateFromFloorStats(Statistics.floorStats);
         }        
 		
 		Dungeon.level = null;
 		Actor.clear();
 		
 		depth++;
+
+		if(depth == 1){
+			Statistics.newLevelParameters.startParameters(hero.className());
+		}
+		
 		if (depth > Statistics.deepestFloor) {
 			Statistics.deepestFloor = depth;
-			Statistics.floor_stats.deepestFloor = depth;
+			Statistics.floorStats.deepestFloor = depth;
 			
 			if (Statistics.qualifiedForNoKilling) {
 				Statistics.completedWithNoKilling = true;

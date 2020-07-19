@@ -681,7 +681,7 @@ public class Hero extends Char {
 			
 			if (theKey != null) {
 				
-				Statistics.floor_stats.keyUsed ++;
+				Statistics.floorStats.keyUsed ++;
 				
 				spend( Key.TIME_TO_UNLOCK );
 				sprite.operate( doorCell );
@@ -870,7 +870,7 @@ public class Hero extends Char {
 	
 	@Override
 	public void damage( int dmg, Object src ) {		
-		Statistics.floor_stats.damageReceived += dmg;
+		Statistics.floorStats.damageReceived += dmg;
 		restoreHealth = false;
 		super.damage( dmg, src );
 		
@@ -1034,7 +1034,13 @@ public class Hero extends Char {
 			attackSkill++;
 			defenseSkill++;
 
-			Statistics.floor_stats.maxHP = HT;
+			Statistics.floorStats.maxHP = HT;
+			Statistics.floorStats.level = lvl;
+			Statistics.floorStats.strength = STR;
+			Statistics.floorStats.heroAttackSkill = attackSkill;
+			Statistics.floorStats.heroDefenseSkill = defenseSkill;
+			
+			
 			
 			if (lvl < 10) {
 				updateAwareness();
@@ -1156,13 +1162,13 @@ public class Hero extends Char {
 		
 		Actor.fixTime();
 		super.die( cause );
-		Statistics.floor_stats.deathInFloor ++;
+		Statistics.floorStats.deathInFloor ++;
 		
 		Ankh ankh = (Ankh)belongings.getItem( Ankh.class );
 		if (ankh == null) {
 			
 			Statistics.updateStatsTilesMapped();
-			Statistics.updateClassifierStats();
+			Statistics.updateLogFile();
 			reallyDie( cause );
 			
 		} else {			
@@ -1303,7 +1309,7 @@ public class Hero extends Char {
 	public boolean search( boolean intentional ) {
 		
 		if(intentional){
-			Statistics.floor_stats.searchDone ++;
+			Statistics.floorStats.searchDone ++;
 		}
 		
 		boolean smthFound = false;
@@ -1386,7 +1392,7 @@ public class Hero extends Char {
 			sprite.showStatus( CharSprite.DEFAULT, TXT_SEARCH );
 			sprite.operate( pos );
 			if (smthFound) {
-				Statistics.floor_stats.foundSomething ++;				
+				Statistics.floorStats.foundSomething ++;				
 				spendAndNext( Random.Float() < level ? TIME_TO_SEARCH : TIME_TO_SEARCH * 2 );
 			} else {
 				spendAndNext( TIME_TO_SEARCH );
@@ -1395,9 +1401,9 @@ public class Hero extends Char {
 		}
 		
 		if (smthFound) {
-			Statistics.floor_stats.foundSomethingRandomly ++;
+			Statistics.floorStats.foundSomethingRandomly ++;
 			if (Level.map[pos] == Terrain.SECRET_DOOR || Level.map[pos] == Terrain.DOOR || Level.map[pos] == Terrain.OPEN_DOOR ) {
-				Statistics.floor_stats.hiddenDoorFound ++;
+				Statistics.floorStats.hiddenDoorFound ++;
 			}
 			GLog.w( TXT_NOTICED_SMTH );
 			Sample.INSTANCE.play( Assets.SND_SECRET );

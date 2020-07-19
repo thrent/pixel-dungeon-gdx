@@ -75,7 +75,7 @@ public class WaterOfAwareness extends WellWater {
 		
 		Journal.remove( Feature.WELL_OF_AWARENESS );		
 
-		Statistics.floor_stats.wellUSed ++;
+		Statistics.floorStats.wellUSed ++;
 		
 		return true;
 	}
@@ -92,7 +92,7 @@ public class WaterOfAwareness extends WellWater {
 			
 			Journal.remove( Feature.WELL_OF_AWARENESS );
 			
-			Statistics.floor_stats.wellUSed ++;
+			Statistics.floorStats.wellUSed ++;
 			
 			return item;
 		}

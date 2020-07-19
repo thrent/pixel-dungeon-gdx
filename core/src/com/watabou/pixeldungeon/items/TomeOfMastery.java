@@ -141,7 +141,7 @@ public class TomeOfMastery extends Item {
 		curUser.sprite.emitter().burst( Speck.factory( Speck.MASTERY ), 12 );
 		GLog.w( "You have chosen the way of the %s!", Utils.capitalize( way.title() ) );
 		
-		Statistics.floor_stats.heroClass = way.title();
+		Statistics.floorStats.heroClass = way.title();
 		
 		if (way == HeroSubClass.BERSERKER && curUser.HP <= curUser.HT * Fury.LEVEL) {
 			Buff.affect( curUser, Fury.class );

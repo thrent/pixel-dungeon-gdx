@@ -49,13 +49,13 @@ public class ScrollOfUpgrade extends InventoryScroll {
 			item.upgrade();
 			
 			if (item instanceof Weapon) {
-				if (Statistics.floor_stats.highestAverageWeaponDamage < ((Weapon)item).averageDamage()) {
-					Statistics.floor_stats.highestAverageWeaponDamage = ((Weapon)item).averageDamage();
+				if (Statistics.floorStats.highestAverageWeaponDamage < ((Weapon)item).averageDamage()) {
+					Statistics.floorStats.highestAverageWeaponDamage = ((Weapon)item).averageDamage();
 				}
 				
 			} else if (item instanceof Armor) {
-				if (Statistics.floor_stats.highestArmorResistance < ((Armor) item).DR()) {
-					Statistics.floor_stats.highestArmorResistance = ((Armor) item).DR();
+				if (Statistics.floorStats.highestArmorResistance < ((Armor) item).DR()) {
+					Statistics.floorStats.highestArmorResistance = ((Armor) item).DR();
 				}
 			} else if (item instanceof Wand) {
 				

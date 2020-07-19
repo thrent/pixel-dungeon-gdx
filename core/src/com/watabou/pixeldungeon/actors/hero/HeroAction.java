@@ -17,6 +17,7 @@
  */
 package com.watabou.pixeldungeon.actors.hero;
 
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.mobs.npcs.NPC;
 
@@ -83,6 +84,7 @@ public class HeroAction {
 		public Char target;
 		public Attack( Char target ) {
 			this.target = target;
+			Statistics.floorStats.attackCount ++;
 		}
 	}
 }

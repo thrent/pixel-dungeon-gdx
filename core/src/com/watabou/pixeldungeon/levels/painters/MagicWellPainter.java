@@ -60,6 +60,6 @@ public class MagicWellPainter extends Painter {
 		
 		room.entrance().set( Room.Door.Type.REGULAR );
 		
-		Statistics.floor_stats.wellSpawned ++;
+		Statistics.floorStats.wellSpawned ++;
 	}
 }

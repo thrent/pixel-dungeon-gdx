@@ -39,8 +39,8 @@ public class PotionOfMight extends PotionOfStrength {
 		hero.sprite.showStatus( CharSprite.POSITIVE, "+1 str, +5 ht" );
 		GLog.p( "Newfound strength surges through your body." );
 		
-		Statistics.floor_stats.maxHP = hero.HT;
-		Statistics.floor_stats.Strength = hero.STR;
+		Statistics.floorStats.maxHP = hero.HT;
+		Statistics.floorStats.strength = hero.STR;
 		
 		Badges.validateStrengthAttained();		
 	}

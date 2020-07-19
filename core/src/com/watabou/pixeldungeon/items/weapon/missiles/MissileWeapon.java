@@ -57,7 +57,7 @@ abstract public class MissileWeapon extends Weapon {
 	@Override
 	protected void onThrow( int cell ) {
 		
-		Statistics.floor_stats.throwingWeaponUsed++;
+		Statistics.floorStats.throwingWeaponUsed++;
 		
 		
 		Char enemy = Actor.findChar( cell );

@@ -53,8 +53,8 @@ abstract public class KindOfWeapon extends EquipableItem {
 		if (hero.belongings.weapon == null || hero.belongings.weapon.doUnequip( hero, true )) {
 			
 			hero.belongings.weapon = this;
-			if (Statistics.floor_stats.highestAverageWeaponDamage < hero.belongings.weapon.averageDamage(hero)) {
-				Statistics.floor_stats.highestAverageWeaponDamage = hero.belongings.weapon.averageDamage(hero);
+			if (Statistics.floorStats.highestAverageWeaponDamage < hero.belongings.weapon.averageDamage(hero)) {
+				Statistics.floorStats.highestAverageWeaponDamage = hero.belongings.weapon.averageDamage(hero);
 			}
 			activate( hero );
 			

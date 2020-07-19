@@ -140,7 +140,7 @@ public abstract class Wand extends KindOfWeapon {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		
-		Statistics.floor_stats.wandUsed++;
+		Statistics.floorStats.wandUsed++;
 		
 		
 		ArrayList<String> actions = super.actions( hero );

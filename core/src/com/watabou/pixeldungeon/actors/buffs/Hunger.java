@@ -68,7 +68,7 @@ public class Hunger extends Buff implements Hero.Doom {
 					
 					GLog.n( TXT_STARVING );
 					hero.damage( 1, this );
-					Statistics.floor_stats.damageFromHunger++;
+					Statistics.floorStats.damageFromHunger++;
 					
 					hero.interrupt();
 					

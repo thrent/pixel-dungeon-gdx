@@ -26,6 +26,8 @@ import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
+import com.watabou.pixeldungeon.actors.blobs.SacrificialFire;
+import com.watabou.pixeldungeon.actors.blobs.SacrificialFire.Marked;
 import com.watabou.pixeldungeon.actors.buffs.Amok;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
 import com.watabou.pixeldungeon.actors.buffs.Sleep;
@@ -300,6 +302,11 @@ public abstract class Mob extends Char {
 			damage += Random.Int( 1, damage );
 			Wound.hit( this );
 		}
+		
+		if(!enemySeen && enemy == Dungeon.hero) {
+			
+		}
+		
 		return damage;
 	}
 	
@@ -332,7 +339,7 @@ public abstract class Mob extends Char {
 
 			if (hostile) {
 				Statistics.enemiesSlain++;
-				Statistics.floor_stats.mobSlain ++;
+				Statistics.floorStats.mobSlain ++;
 				Badges.validateMonstersSlain();
 				Statistics.qualifiedForNoKilling = false;
 				
@@ -346,6 +353,9 @@ public abstract class Mob extends Char {
 
 			int exp = exp();
 			if (exp > 0) {
+				if(Dungeon.hero.buff( Marked.class ) != null) {
+					SacrificialFire.sacrifice(this);
+				}
 				Dungeon.hero.sprite.showStatus( CharSprite.POSITIVE, TXT_EXP, exp );
 				Dungeon.hero.earnExp( exp );
 			}

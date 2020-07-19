@@ -97,8 +97,8 @@ public class Armor extends EquipableItem {
 		if (hero.belongings.armor == null || hero.belongings.armor.doUnequip( hero, true, false )) {
 			
 			hero.belongings.armor = this;
-			if (Statistics.floor_stats.highestArmorResistance < hero.belongings.armor.DR()) {
-				Statistics.floor_stats.highestArmorResistance = hero.belongings.armor.DR();
+			if (Statistics.floorStats.highestArmorResistance < hero.belongings.armor.DR()) {
+				Statistics.floorStats.highestArmorResistance = hero.belongings.armor.DR();
 			}
 			
 			cursedKnown = true;

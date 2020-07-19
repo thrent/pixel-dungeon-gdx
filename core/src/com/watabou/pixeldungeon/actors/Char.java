@@ -25,6 +25,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.ResultDescriptions;
+import com.watabou.pixeldungeon.actors.blobs.SacrificialFire.Marked;
 import com.watabou.pixeldungeon.actors.buffs.Amok;
 import com.watabou.pixeldungeon.actors.buffs.Bleeding;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
@@ -521,4 +522,5 @@ public abstract class Char extends Actor {
 	public HashSet<Class<?>> immunities() {
 		return EMPTY;
 	}
+	
 }

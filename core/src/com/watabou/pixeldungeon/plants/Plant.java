@@ -122,7 +122,7 @@ public class Plant implements Bundlable {
 		@Override
 		protected void onThrow( int cell ) {
 			
-			Statistics.floor_stats.seedUsed++;
+			Statistics.floorStats.seedUsed++;
 			
 			if (Dungeon.level.map[cell] == Terrain.ALCHEMY || Level.pit[cell]) {
 				super.onThrow( cell );

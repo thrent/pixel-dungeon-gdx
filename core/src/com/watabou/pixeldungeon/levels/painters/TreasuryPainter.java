@@ -58,6 +58,6 @@ public class TreasuryPainter extends Painter {
 		
 		room.entrance().set( Room.Door.Type.LOCKED );
 		level.addItemToSpawn( new IronKey() );
-		Statistics.floor_stats.keySpawned ++;
+		Statistics.floorStats.keySpawned ++;
 	}
 }

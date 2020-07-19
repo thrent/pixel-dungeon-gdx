@@ -85,7 +85,7 @@ public class WndImp extends Window {
 		}
 		
 		imp.flee();
-		Statistics.floor_stats.questCompleted ++;		
+		Statistics.floorStats.questCompleted ++;		
 		Imp.Quest.complete();
 	}
 }

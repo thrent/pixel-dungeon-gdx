@@ -213,7 +213,7 @@ public class Imp extends NPC {
 		public static void spawn( CityLevel level, Room room ) {
 			if (!spawned && Dungeon.depth > 16 && Random.Int( 20 - Dungeon.depth ) == 0) {
 				
-				Statistics.floor_stats.questSpawned ++;
+				Statistics.floorStats.questSpawned ++;
 				Imp npc = new Imp();
 				do {
 					npc.pos = level.randomRespawnCell();

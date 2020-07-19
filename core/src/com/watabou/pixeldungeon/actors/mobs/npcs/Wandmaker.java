@@ -183,7 +183,7 @@ public class Wandmaker extends NPC {
 		public static void spawn( PrisonLevel level, Room room ) {
 			if (!spawned && Dungeon.depth > 6 && Random.Int( 10 - Dungeon.depth ) == 0) {
 				
-				Statistics.floor_stats.questSpawned ++;
+				Statistics.floorStats.questSpawned ++;
 				Wandmaker npc = new Wandmaker();
 				do {
 					npc.pos = room.random();

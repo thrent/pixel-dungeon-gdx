@@ -56,7 +56,7 @@ public class PitPainter extends Painter {
 		}
 		
 		level.drop( new IronKey(), remains ).type = Type.SKELETON;
-		Statistics.floor_stats.keySpawned ++;
+		Statistics.floorStats.keySpawned ++;
 
 		
 		if (Random.Int( 5 ) == 0) {

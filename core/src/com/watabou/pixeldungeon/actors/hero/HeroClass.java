@@ -104,11 +104,11 @@ public enum HeroClass {
 			break;
 		}
 		
-		Statistics.floor_stats.Strength = hero.STR;
-		Statistics.floor_stats.maxHP = hero.HT;
-		Statistics.floor_stats.heroClass = hero.className();
-		Statistics.floor_stats.highestArmorResistance = 2;
-		Statistics.floor_stats.highestAverageWeaponDamage = hero.belongings.weapon.averageDamage(hero);
+		Statistics.floorStats.strength = hero.STR;
+		Statistics.floorStats.maxHP = hero.HT;
+		Statistics.floorStats.heroClass = hero.className();
+		Statistics.floorStats.highestArmorResistance = 2;
+		Statistics.floorStats.highestAverageWeaponDamage = hero.belongings.weapon.averageDamage(hero);
 		
 		
 		

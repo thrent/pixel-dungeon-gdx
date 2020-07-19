@@ -108,7 +108,7 @@ public abstract class Scroll extends Item {
 	@Override
 	public void execute( Hero hero, String action ) {
 		
-		Statistics.floor_stats.scrollUsed++;
+		Statistics.floorStats.scrollUsed++;
 		
 		
 		if (action.equals( AC_READ )) {

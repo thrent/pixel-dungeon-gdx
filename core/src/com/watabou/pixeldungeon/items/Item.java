@@ -306,7 +306,7 @@ public class Item implements Bundlable {
 			}
 			if (isBroken()) {
 				getBroken();
-				Statistics.floor_stats.brokenItem++;
+				Statistics.floorStats.brokenItem++;
 				if (levelKnown) {
 					GLog.n( TXT_BROKEN, name() );
 					Dungeon.hero.interrupt();

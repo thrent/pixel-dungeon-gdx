@@ -58,7 +58,7 @@ public class WaterOfTransmutation extends WellWater {
 		}
 		
 		if (item != null) {
-			Statistics.floor_stats.itemTransmuted ++;
+			Statistics.floorStats.itemTransmuted ++;
 			Journal.remove( Feature.WELL_OF_TRANSMUTATION );
 		}
 		

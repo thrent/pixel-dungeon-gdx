@@ -82,8 +82,8 @@ public abstract class Level implements Bundlable {
 	};
 	
 	// Removed FINAL from these variables
-	public static int WIDTH = 32;
-	public static int HEIGHT = 32;
+	public static int WIDTH = 64;
+	public static int HEIGHT = 64;
 	public static int LENGTH = WIDTH * HEIGHT;
 	
 	public static final int[] NEIGHBOURS4 = {-WIDTH, +1, +WIDTH, -1}; 
@@ -147,10 +147,6 @@ public abstract class Level implements Bundlable {
 	public void create() {
 		
 		resizingNeeded = false;
-		
-		// WIDTH = Statistics.game_stats.levelParameters[0];
-		// HEIGHT = Statistics.game_stats.levelParameters[1];
-		// LENGTH = WIDTH * HEIGHT;
 		
 		map = new int[LENGTH];
 		visited = new boolean[LENGTH];

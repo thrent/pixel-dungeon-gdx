@@ -63,7 +63,7 @@ public class Gold extends Item {
 		
 		Dungeon.gold += quantity;
 		Statistics.goldCollected += quantity;
-		Statistics.floor_stats.goldCollected += quantity;
+		Statistics.floorStats.goldCollected += quantity;
 		Badges.validateGoldCollected();
 		
 		GameScene.pickUp( this );

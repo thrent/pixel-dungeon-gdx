@@ -181,7 +181,7 @@ public class Potion extends Item {
 	
 	protected void drink( Hero hero ) {
 		
-		Statistics.floor_stats.potionDrank ++;
+		Statistics.floorStats.potionDrank ++;
 		
 		detach( hero.belongings.backpack );
 		
@@ -197,7 +197,7 @@ public class Potion extends Item {
 	@Override
 	protected void onThrow( int cell ) {
 		
-		Statistics.floor_stats.potionThrown ++;
+		Statistics.floorStats.potionThrown ++;
 		
 		if (Dungeon.hero.pos == cell) {
 			

@@ -42,7 +42,7 @@ public class CryptPainter extends Painter {
 		
 		entrance.set( Room.Door.Type.LOCKED );
 		level.addItemToSpawn( new IronKey() );
-		Statistics.floor_stats.keySpawned ++;
+		Statistics.floorStats.keySpawned ++;
 		
 		if (entrance.x == room.left) {
 			set( level, new Point( room.right-1, room.top+1 ), Terrain.STATUE );

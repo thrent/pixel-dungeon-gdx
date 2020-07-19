@@ -40,16 +40,17 @@ import com.watabou.utils.Random;
 public class Generator {
 
 	public static enum Category {
-		WEAPON	( 15,	Weapon.class ),
-		ARMOR	( 10,	Armor.class ),
-		POTION	( 50,	Potion.class ),
-		SCROLL	( 40,	Scroll.class ),
-		WAND	( 4,	Wand.class ),
-		RING	( 2,	Ring.class ),
-		SEED	( 5,	Plant.Seed.class ),
-		FOOD	( 0,	Food.class ),
-		GOLD	( 50,	Gold.class ),
-		MISC	( 5,	Item.class );
+		WEAPON	       ( 15,	Weapon.class ),
+		ARMOR	       ( 10,	Armor.class ),
+		POTION	       ( 50,	Potion.class ),
+		SCROLL	       ( 40,	Scroll.class ),
+		WAND	       ( 4,		Wand.class ),
+		RING	       ( 2,		Ring.class ),
+		SEED	       ( 5,		Plant.Seed.class ),
+		FOOD       	   ( 0,		Food.class ),
+		GOLD	       ( 50,	Gold.class ),
+		MISC	       ( 5,		Item.class ),
+		THROWINGWEAPON ( 0, 	Weapon.class);
 		
 		public Class<?>[] classes;
 		public float[] probs;
@@ -192,6 +193,15 @@ public class Generator {
 			Bomb.class,
 			Honeypot.class};
 		Category.MISC.probs = new float[]{ 2, 1 };
+		
+		Category.THROWINGWEAPON.classes = new Class<?>[]{ 			
+			Dart.class,
+			Javelin.class,
+			IncendiaryDart.class,
+			CurareDart.class,
+			Shuriken.class,
+			Tamahawk.class };
+		Category.THROWINGWEAPON.probs = new float[]{ 1, 1, 1, 1, 1, 1};
 	}
 	
 	public static void reset() {
@@ -257,6 +267,21 @@ public class Generator {
 		int curStr = Hero.STARTING_STR + Dungeon.potionOfStrength;
 		
 		Category cat = Category.WEAPON;
+		
+		Weapon w1 = (Weapon)cat.classes[Random.chances( cat.probs )].newInstance();
+		Weapon w2 = (Weapon)cat.classes[Random.chances( cat.probs )].newInstance();
+		
+		w1.random();
+		w2.random();
+		
+		return Math.abs( curStr - w1.STR ) < Math.abs( curStr - w2.STR ) ? w1 : w2;
+	}
+	
+public static Weapon randomThrowingWeapon() throws Exception {
+		
+		int curStr = Hero.STARTING_STR + Dungeon.potionOfStrength;
+		
+		Category cat = Category.THROWINGWEAPON;
 		
 		Weapon w1 = (Weapon)cat.classes[Random.chances( cat.probs )].newInstance();
 		Weapon w2 = (Weapon)cat.classes[Random.chances( cat.probs )].newInstance();

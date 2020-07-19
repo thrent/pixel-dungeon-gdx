@@ -244,7 +244,7 @@ public class Ghost extends NPC {
 		public static void spawn( SewerLevel level ) {
 			if (!spawned && Dungeon.depth > 1 && Random.Int( 5 - Dungeon.depth ) == 0) {
 				
-				Statistics.floor_stats.questSpawned ++;
+				Statistics.floorStats.questSpawned ++;
 				
 				Ghost ghost = new Ghost();
 				do {

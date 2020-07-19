@@ -52,8 +52,8 @@ public abstract class RegularLevel extends Level {
 	@Override
 	protected boolean build() {
 		
-		minRoomSize = Statistics.game_stats.levelParameters[6];
-		maxRoomSize = Statistics.game_stats.levelParameters[7];
+		minRoomSize = Statistics.newLevelParameters.minRoomSize;
+		maxRoomSize = Statistics.newLevelParameters.maxRoomSize;
 		
 		if (!initRooms()) {
 			return false;
@@ -82,10 +82,10 @@ public abstract class RegularLevel extends Level {
 		} while (distance < minDistance);
 		
 
-		Statistics.floor_stats.distanceFromEntranceToExit = distance;
-		Statistics.floor_stats.roomCount = rooms.size();
-		Statistics.floor_stats.roomSizeMin = minRoomSize;
-		Statistics.floor_stats.roomSizeMax = maxRoomSize;
+		Statistics.floorStats.distanceFromEntranceToExit = distance;
+		Statistics.floorStats.roomCount = rooms.size();
+		Statistics.floorStats.roomSizeMin = minRoomSize;
+		Statistics.floorStats.roomSizeMax = maxRoomSize;
 		
 		
 		roomEntrance.type = Type.ENTRANCE;
@@ -148,7 +148,7 @@ public abstract class RegularLevel extends Level {
 		}
 		assignRoomType();
 		
-		Statistics.floor_stats.roomCount = rooms.size();
+		Statistics.floorStats.roomCount = rooms.size();
 		
 		paint();
 		paintWater();
@@ -156,17 +156,32 @@ public abstract class RegularLevel extends Level {
 		
 		placeTraps();
 		
-		Statistics.floor_stats.hiddenDoorCount = secretDoors;
+		Statistics.floorStats.hiddenDoorCount = secretDoors;
 		return true;
 	}
 	
 	protected boolean initRooms() {
 		rooms = new HashSet<Room>();
-		split( new Rect( 0, 0, WIDTH - 1, HEIGHT - 1 ) );
 		
-		int minRoomSize = Statistics.game_stats.levelParameters[2];
+		// Reduce the actual size of the level, so that it may be increased or lowered from one floor to another
+		int levelWidth =  Statistics.newLevelParameters.levelWidth;
+		int levelHeight = Statistics.newLevelParameters.levelHeigth;
 		
-		if (rooms.size() < minRoomSize ) {
+		// Set boss room parameters down to their original values
+		if (Dungeon.bossLevel(Dungeon.depth)) {
+			levelWidth = 32;
+			levelHeight = 32;
+		}
+		
+		Statistics.floorStats.dungeonHeight = levelHeight;
+		Statistics.floorStats.dungeonWidth = levelWidth;
+		Statistics.floorStats.dungeonLength = levelHeight * levelWidth;
+		
+		split( new Rect( 0, 0, levelWidth - 1, levelHeight - 1 ) );
+		
+		int minRoomCount = 8;
+		
+		if (rooms.size() < minRoomCount ) {
 			return false;
 		}
 		
@@ -183,6 +198,7 @@ public abstract class RegularLevel extends Level {
 	protected void assignRoomType() {
 		
 		int specialRooms = 0;
+		int additionalSpecialRoom = 2;
 		// specials.remove( Type.ALTAR ); // The altar is bugged
 		
 		for (Room r : rooms) {
@@ -207,13 +223,15 @@ public abstract class RegularLevel extends Level {
 						specials.remove( Type.TREASURY );
 						specials.remove( Type.VAULT );
 						**/
-						specials.remove( Type.WEAK_FLOOR );
-						
-					} else if (Dungeon.depth % 5 == 2 && specials.contains( Type.LABORATORY )) {
+						specials.remove( Type.WEAK_FLOOR );							
+					}
+					
+					else if (Dungeon.depth % 5 == 2 && specials.contains( Type.LABORATORY )) {
 						
 						r.type = Type.LABORATORY;
-						
-					} else {
+							
+					}
+					else {
 						
 						int n = specials.size();
 						r.type = specials.get( Math.min( Random.Int( n ), Random.Int( n ) ) );
@@ -227,7 +245,25 @@ public abstract class RegularLevel extends Level {
 					specials.remove( r.type );
 					specialRooms++;
 					
-				} else if (Random.Int( 2 ) == 0){
+				}				
+				
+				else if (specials.size() > 0 &&
+						r.width() > 3 && r.height() > 3 &&
+						additionalSpecialRoom > 0) {
+					
+					int n = specials.size();
+					r.type = specials.get( Math.min( Random.Int( n ), Random.Int( n ) ) );
+					if (r.type == Type.WEAK_FLOOR) {
+						weakFloorCreated = true;						
+					}
+					
+					additionalSpecialRoom --;
+					Room.useType( r.type );
+					specials.remove( r.type );
+					specialRooms++;
+				}
+				
+				else if (Random.Int( 2 ) == 0){
 
 					HashSet<Room> neigbours = new HashSet<Room>();
 					for (Room n : r.neigbours) {
@@ -268,7 +304,7 @@ public abstract class RegularLevel extends Level {
 			}
 		}
 		
-		Statistics.floor_stats.specialRoomCount = specialRooms;
+		Statistics.floorStats.specialRoomCount = specialRooms;
 	}
 	
 	protected void paintWater() {
@@ -314,7 +350,7 @@ public abstract class RegularLevel extends Level {
 	protected void placeTraps() {
 		
 		int nTraps = nTraps();
-		Statistics.floor_stats.trapCount = nTraps;
+		Statistics.floorStats.trapCount = nTraps;
 		float[] trapChances = trapChances();
 		
 		for (int i=0; i < nTraps; i++) {
@@ -354,8 +390,8 @@ public abstract class RegularLevel extends Level {
 	
 	protected int nTraps() {
 		int count = Dungeon.depth <= 1 ? 0 : Random.Int( 1, rooms.size() + Dungeon.depth );
-		count += Statistics.game_stats.levelParameters[5]; // Additional traps
-		Statistics.floor_stats.trapCount = count;
+		count += Statistics.newLevelParameters.additionalTraps; // Additional traps
+		Statistics.floorStats.trapCount = count;
 		return count;
 	}
 	
@@ -446,6 +482,8 @@ public abstract class RegularLevel extends Level {
 	}
 	
 	protected void paintDoors( Room r ) {
+		
+		int bonusSecretDoors = Statistics.newLevelParameters.additionalHiddenDoor;
 		for (Room n : r.connected.keySet()) {
 
 			if (joinRooms( r, n )) {
@@ -470,6 +508,14 @@ public abstract class RegularLevel extends Level {
 					map[door] = secret ? Terrain.SECRET_DOOR : Terrain.DOOR;
 					if (secret) {
 						secretDoors++;
+						Statistics.floorStats.hiddenDoorCount ++;
+					}
+					else {
+						// Will add additional secret doors based on the exploration rating.
+						if (bonusSecretDoors > 0) {
+							map[door] = Terrain.SECRET_DOOR;
+							bonusSecretDoors --;
+						}
 					}
 				}
 				break;
@@ -479,7 +525,7 @@ public abstract class RegularLevel extends Level {
 			case HIDDEN:
 				map[door] = Terrain.SECRET_DOOR;
 				secretDoors++;
-				Statistics.floor_stats.hiddenDoorCount ++;
+				Statistics.floorStats.hiddenDoorCount ++;
 				break;
 			case BARRICADE:
 				map[door] = Random.Int( 3 ) == 0 ? Terrain.BOOKSHELF : Terrain.BARRICADE;
@@ -546,7 +592,10 @@ public abstract class RegularLevel extends Level {
 	
 	@Override
 	public int nMobs() {
-		return 2 + Dungeon.depth % 5 + Random.Int( 3 );
+		int count =  2 + Dungeon.depth % 5 + Random.Int( 3 );
+		count += (int) count * Statistics.newLevelParameters.additionalMobs / 100;
+		Statistics.floorStats.mobSpawned = count + Statistics.newLevelParameters.additionalHigherLevelMobs;
+		return count;
 	}
 	
 	@Override
@@ -554,6 +603,17 @@ public abstract class RegularLevel extends Level {
 		int nMobs = nMobs();
 		for (int i=0; i < nMobs; i++) {
 			Mob mob = Bestiary.mob( Dungeon.depth );
+			do {
+				mob.pos = randomRespawnCell();
+			} while (mob.pos == -1);
+			mobs.add( mob );
+			Actor.occupyCell( mob );
+		}
+		
+		// Spawn stronger mobs if required
+		int nStrongerMobs = Statistics.newLevelParameters.additionalHigherLevelMobs;
+		for (int i=0; i < nStrongerMobs; i++) {
+			Mob mob = Bestiary.mob(Statistics.newLevelParameters.higherFloor);
 			do {
 				mob.pos = randomRespawnCell();
 			} while (mob.pos == -1);
@@ -608,8 +668,18 @@ public abstract class RegularLevel extends Level {
 	
 	@Override
 	protected void createItems() {
+
+		// 
+		try {			
+			Statistics.newLevelParameters.generateItems();
+			itemsToSpawn.addAll(Statistics.newLevelParameters.additionalItemToSpawn);
+			Statistics.newLevelParameters.additionalItemToSpawn.clear();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		int nItems = 3;
+		int nItems = 2;
 		while (Random.Float() < 0.4f) {
 			nItems++;
 		}

@@ -64,7 +64,7 @@ public class WndWandmaker extends WndQuest {
 		wandmaker.destroy();
 		
 		wandmaker.sprite.die();
-		Statistics.floor_stats.questCompleted ++;		
+		Statistics.floorStats.questCompleted ++;		
 		Wandmaker.Quest.complete();
 	}
 }

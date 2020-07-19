@@ -57,7 +57,7 @@ public class WndSadGhost extends WndQuest {
 		ghost.yell( "Farewell, adventurer!" );
 		ghost.die( null );
 		
-		Statistics.floor_stats.questCompleted ++;
+		Statistics.floorStats.questCompleted ++;
 		Ghost.Quest.complete();
 	}
 }

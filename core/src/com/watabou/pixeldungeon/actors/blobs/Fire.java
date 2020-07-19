@@ -55,7 +55,7 @@ public class Fire extends Blob {
 					
 					int oldTile = Dungeon.level.map[pos];		
 					if(Dungeon.level.map[oldTile] == Terrain.BARRICADE) {
-						Statistics.floor_stats.barricadeBurned ++;
+						Statistics.floorStats.barricadeBurned ++;
 					}
 					Dungeon.level.destroy( pos );
 					

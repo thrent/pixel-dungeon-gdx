@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import com.watabou.noosa.Scene;
 import com.watabou.pixeldungeon.Assets;
+import com.watabou.pixeldungeon.Statistics;
 import com.watabou.pixeldungeon.items.Amulet;
 import com.watabou.pixeldungeon.levels.painters.Painter;
 import com.watabou.utils.Random;
@@ -48,19 +49,23 @@ public class LastLevel extends Level {
 	
 	@Override
 	protected boolean build() {
+		
+		int levelHeigth = Statistics.newLevelParameters.levelHeigth;
+		int levelWidth = Statistics.newLevelParameters.levelWidth;
+		int levelSize = levelHeigth * levelWidth;
 
 		Arrays.fill( map, Terrain.WALL );
-		Painter.fill( this, 1, 1, SIZE, SIZE, Terrain.WATER );
-		Painter.fill( this, 2, 2, SIZE-2, SIZE-2, Terrain.EMPTY );
-		Painter.fill( this, SIZE/2, SIZE/2, 3, 3, Terrain.EMPTY_SP );
+		Painter.fill( this, 1, 1, levelSize, levelSize, Terrain.WATER );
+		Painter.fill( this, 2, 2, levelSize-2, levelSize-2, Terrain.EMPTY );
+		Painter.fill( this, levelSize/2, levelSize/2, 3, 3, Terrain.EMPTY_SP );
 		
-		entrance = SIZE * WIDTH + SIZE / 2 + 1;
+		entrance = levelSize * levelWidth + levelSize / 2 + 1;
 		map[entrance] = Terrain.ENTRANCE;
 		
-		exit = entrance - WIDTH * SIZE;
+		exit = entrance - levelWidth * levelSize;
 		map[exit] = Terrain.LOCKED_EXIT;
 		
-		pedestal = (SIZE / 2 + 1) * (WIDTH + 1);
+		pedestal = (levelSize / 2 + 1) * (levelWidth + 1);
 		map[pedestal] = Terrain.PEDESTAL;
 		map[pedestal-1] = map[pedestal+1] = Terrain.STATUE_SP;
 		
