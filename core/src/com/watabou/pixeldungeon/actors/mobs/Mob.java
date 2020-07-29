@@ -304,7 +304,7 @@ public abstract class Mob extends Char {
 		}
 		
 		if(!enemySeen && enemy == Dungeon.hero) {
-			
+			Statistics.floorStats.sneakAttackCount ++;
 		}
 		
 		return damage;

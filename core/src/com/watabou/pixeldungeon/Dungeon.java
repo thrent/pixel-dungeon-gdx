@@ -151,7 +151,11 @@ public class Dungeon {
 		
         
         if(Statistics.floorStats.deepestFloor != 0) {
-        	Statistics.updateLogFile();
+        	if (!Dungeon.bossLevel( Dungeon.depth)) {
+				// spawn mobs from a higher floor in case of boss level
+        		Statistics.updateLogFile();
+			}
+        	
         	Statistics.gameStats.updateFromFloorStats(Statistics.floorStats);
         }        
 		

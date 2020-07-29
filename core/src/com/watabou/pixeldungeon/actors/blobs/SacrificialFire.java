@@ -47,6 +47,7 @@ public class SacrificialFire extends Blob {
 	private static final String TXT_REWARD		= "\"Your sacrifice is worthy and so you are!\" ";
 	
 	protected int pos;
+	public static int scrollSpawned = 0;
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
@@ -113,11 +114,15 @@ public class SacrificialFire extends Blob {
 					GLog.w( TXT_WORTHY );
 				} else {
 					fire.seed( fire.pos, 0 );
-					Journal.remove( Feature.SACRIFICIAL_FIRE );
+					Journal.remove( Feature.SACRIFICIAL_FIRE );					
 					
-					GLog.w( TXT_REWARD );
-					GameScene.effect( new Flare( 7, 32 ).color( 0x66FFFF, true ).show( ch.sprite.parent, DungeonTilemap.tileCenterToWorld( fire.pos ), 2f ) );
-					Dungeon.level.drop( new ScrollOfWipeOut(), fire.pos ).sprite.drop();
+					if(scrollSpawned <= 3) {
+						GLog.w( TXT_REWARD );
+						GameScene.effect( new Flare( 7, 32 ).color( 0x66FFFF, true ).show( ch.sprite.parent, DungeonTilemap.tileCenterToWorld( fire.pos ), 2f ) );
+						Dungeon.level.drop( new ScrollOfWipeOut(), fire.pos ).sprite.drop();
+						scrollSpawned ++;
+					}
+					
 					
 					
 

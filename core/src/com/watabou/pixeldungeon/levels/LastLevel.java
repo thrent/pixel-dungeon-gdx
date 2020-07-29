@@ -56,8 +56,8 @@ public class LastLevel extends Level {
 
 		Arrays.fill( map, Terrain.WALL );
 		Painter.fill( this, 1, 1, levelSize, levelSize, Terrain.WATER );
-		Painter.fill( this, 2, 2, levelSize-2, levelSize-2, Terrain.EMPTY );
-		Painter.fill( this, levelSize/2, levelSize/2, 3, 3, Terrain.EMPTY_SP );
+		// Painter.fill( this, 2, 2, levelSize-2, levelSize-2, Terrain.EMPTY );
+		// Painter.fill( this, levelSize/2, levelSize/2, 3, 3, Terrain.EMPTY_SP );
 		
 		entrance = levelSize * levelWidth + levelSize / 2 + 1;
 		map[entrance] = Terrain.ENTRANCE;
