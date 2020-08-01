@@ -150,13 +150,9 @@ public class Dungeon {
 	public static Level newLevel() {		
 		
         
-        if(Statistics.floorStats.deepestFloor != 0) {
-        	if (!Dungeon.bossLevel( Dungeon.depth)) {
-				// spawn mobs from a higher floor in case of boss level
-        		Statistics.updateLogFile();
-			}
-        	
-        	Statistics.gameStats.updateFromFloorStats(Statistics.floorStats);
+        if(Statistics.floorStats.deepestFloor != 0 && !Dungeon.bossLevel( Dungeon.depth)) {        				
+    		Statistics.updateLogFile();
+    		Statistics.updateStats();
         }        
 		
 		Dungeon.level = null;

@@ -45,6 +45,7 @@ import com.watabou.pixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.watabou.pixeldungeon.levels.Level;
 import com.watabou.pixeldungeon.levels.RegularLevel;
 import com.watabou.pixeldungeon.levels.Room;
+import com.watabou.pixeldungeon.RandomForestClassifier;
 
 public class Statistics {
 	
@@ -64,8 +65,7 @@ public class Statistics {
 	
 	public static boolean amuletObtained = false;
 
-	public static FloorStatistics floorStats = new FloorStatistics();
-	public static GameStatistics gameStats = new GameStatistics();
+	public static FloorStatistics floorStats = new FloorStatistics();	
 	
 	public static LevelParameters newLevelParameters = new LevelParameters();
 
@@ -87,7 +87,6 @@ public class Statistics {
 		amuletObtained = false;
 		
 		floorStats.init();
-		gameStats.reset();		
 		newLevelParameters. init();
 		
 		generateLogFile();
@@ -105,6 +104,11 @@ public class Statistics {
 	private static final String DURATION	= "duration";
 	private static final String AMULET		= "amuletObtained";
 	
+	public static void updateStats() {
+		newLevelParameters.update();
+		floorStats.reset();			
+		SacrificialFire.scrollSpawned = 0;
+	}
 	
 	public static void storeInBundle( Bundle bundle ) {
 		bundle.put( GOLD,		goldCollected );
@@ -144,7 +148,8 @@ public class Statistics {
 						+ "minRoomSize,maxRoomSize,levelSizeLeftovers,additionalTraps,additionalMobs,"
 						+ "additionalHigherLevelMobs,higherFloor,Gameplay,ExplorationRating,ChallengeRating");
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		
 		try(FileWriter fw = new FileWriter("GameLog_Challenge.txt", true);
@@ -157,7 +162,8 @@ public class Statistics {
 						+ "ScrollUsed,PotionUsed,PotionThrown,DamageReceived,"
 						+ "DeathInFloor,Armor,WeaponDamage,BrokenItem,TrapCount,turnSpentLowHP,turnSpentHighHP");
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		
 		try(FileWriter fw = new FileWriter("GameLog_Exploration.txt", true);
@@ -171,10 +177,11 @@ public class Statistics {
 						+ "keySpawned,keyUsed,QuestSpawned,QuestCleared,WellSpawned,Wellused,"
 						+ "ItemTransmuted,PotionCooked,BarricadeBurned");
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		
-		try(FileWriter fw = new FileWriter("GameLog_Challenge_Ratios.txt", true);
+		try(FileWriter fw = new FileWriter("GameLog_Challenge_Ratio.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 			{
@@ -184,10 +191,11 @@ public class Statistics {
 						+ "ScrollUsed,PotionUsed,PotionThrown,DamageReceived,"
 						+ "DeathInFloor,Armor,WeaponDamage,BrokenItem,TrapCount,%turnSpentLowHP,%turnSpentHighHP");
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		
-		try(FileWriter fw = new FileWriter("GameLog_Exploration_Ratios.txt", true);
+		try(FileWriter fw = new FileWriter("GameLog_Exploration_Ratio.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 			{
@@ -197,7 +205,8 @@ public class Statistics {
 						+ "SearchDone,FoundSomething,FoundSomethingRandomly,RoomSizeMin,RoomSizeMax,"
 						+ "SpecialFeaturesClearedRatio");
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 	}
 	
@@ -220,7 +229,8 @@ public class Statistics {
 					newLevelParameters.predictedExplorationRating + "," + newLevelParameters.predictedChallengeRating;
 			    out.println(sentence);
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		
 		try(FileWriter fw = new FileWriter("GameLog_Challenge.txt", true);
@@ -243,7 +253,8 @@ public class Statistics {
 			    out.println(sentence);
 			    
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		try(FileWriter fw = new FileWriter("GameLog_Exploration.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
@@ -264,7 +275,8 @@ public class Statistics {
 			    out.println(sentence);
 			    
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		try(FileWriter fw = new FileWriter("GameLog_Challenge_Ratio.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
@@ -289,7 +301,8 @@ public class Statistics {
 			    out.println(sentence);
 			    
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		try(FileWriter fw = new FileWriter("GameLog_Exploration_Ratio.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
@@ -308,7 +321,79 @@ public class Statistics {
 			    out.println(sentence);
 			    
 			} catch (IOException e) {
-			    //exception handling left as an exercise for the reader
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		
+		
+		try(FileWriter fw = new FileWriter("label_exploration.txt", true);
+			    BufferedWriter bw = new BufferedWriter(fw);
+			    PrintWriter out = new PrintWriter(bw))
+			{
+				String sentence = "1";
+				if(floorStats.unexploredTilesRatio <= 5) {
+					sentence = "2";
+				}
+				else if(floorStats.unexploredTilesRatio <= 15) {
+					sentence = "1";
+				}
+				else {
+					sentence = "0";
+				}
+			    out.println(sentence);
+			    
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		try(FileWriter fw = new FileWriter("label_Gameplay.txt", true);
+			    BufferedWriter bw = new BufferedWriter(fw);
+			    PrintWriter out = new PrintWriter(bw))
+			{
+				String sentence = "0";
+				if(floorStats.wandUsed >= 2 && 
+						floorStats.wandUsed > 2 * floorStats.throwingWeaponUsed / 3 &&
+						floorStats.wandUsed > 2 * floorStats.sneakAttackCount / 3) {
+					sentence = "2";
+				}
+				else if(floorStats.throwingWeaponUsed >= 4 &&
+						floorStats.throwingWeaponUsed >= floorStats.sneakAttackCount ) {
+					sentence = "1";
+				}
+				else if(floorStats.sneakAttackCount >= 3 ) {
+					sentence = "3";
+				}
+				else {
+					sentence = "0";
+				}
+			    out.println(sentence);
+			    
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		try(FileWriter fw = new FileWriter("label_challenge.txt", true);
+			    BufferedWriter bw = new BufferedWriter(fw);
+			    PrintWriter out = new PrintWriter(bw))
+			{
+				String sentence = "1";
+				if(floorStats.turnSpentLowHP >= 50 ) {
+					sentence = "0";
+				}
+				else if(floorStats.deathInFloor >= 0) {
+					sentence = "0";
+				}
+				else if (floorStats.turnSpentHighHP > 250 || floorStats.turnSpentHighHP > 2 * floorStats.floorDuration / 3){
+					sentence = "2";
+				}
+			    out.println(sentence);
+			    
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 	}
 	
@@ -549,248 +634,6 @@ public class Statistics {
 		}
 	}
 
-	public static class GameStatistics {
-		// Contains the sum of all the floor statistics gathered over the course of the current game
-		public FloorStatistics[] floorStatsArray = new FloorStatistics[26];
-		
-		public int challengeRating;
-		public int explorationRating;
-		public int gameplayRating; // 0 for melee, 1 for ranged, 2 for magic and 3 for stealth
-		
-		public int predictedChallenge; // From -1 to +1
-		public int identifiedGameplay; // From 0 to 2
-		public int predictedExploration; // From -1 to +1
-
-		// Content
-		public int keySpawned;
-		public int keyUsed;
-		public int questSpawned;
-		public int questCompleted;
-		public int itemTransmuted;
-		public int potionCooked;
-		public int barricadeBurned;
-		public int wellSpawned;
-		public int wellUSed;
-		// map
-		public int SpecialRoomCount;
-		public int HiddenDoorCount;
-		public int hiddenDoorFound;
-		public int TrapCount;
-		public int averageDungeonWidth;
-		public int averageDungeonHeight;
-		public int averageDungeonLength;
-		public int RoomCount;
-		public int averageDistanceFromEntranceToExit;
-		public int gameDuration;
-		public int TotalUnexploredTilesRatio;
-		public int explorableTilesCount;
-		public int roomSizeMin;
-		public int roomSizeMax;
-		// Used items
-		public int seedUsed;
-		public int scrollUsed;
-		public int potionThrown;
-		public int potionDrank;
-		public int throwingWeaponUsed;
-		public int wandUsed;
-		public int foodUsed;		
-		// Resource scarcity
-		public int damageFromHunger;
-		public int brokenItem;
-		public int averageSpawnedItemCount;
-		// Equipped gear
-		public int highestArmorResistance;
-		public int highestAverageWeaponDamage;
-		// Combat
-		public int turnSpentLowHP;
-		public int turnSpentHighHP;
-		public int mobSlain;
-		public int mobSpawned;
-		public int damageReceived;
-		public int deathCount;
-		// Stats
-		public int deepestFloor;
-		public int currentFloor;
-		public int goldCollected;
-		public int Level;
-		public int Strength;
-		public String heroClass;
-		public static int maxHP;
-		public int heroAttackSkill;
-		public int heroDefenseSkill;
-		// Actions 
-		public int searchDone;
-		public int foundSomething;
-		public int foundSomethingRandomly;
-		public int attackCount;
-		public int sneakAttackCount;
-
-
-
-		public void reset() {
-			
-			floorStatsArray[0] = floorStats;
-			
-			challengeRating = 0;
-			explorationRating = 0;
-			gameplayRating = 0;
-			
-			predictedChallenge = 0;
-			identifiedGameplay = 0;
-			predictedExploration = 0;
-
-			// Content
-			keySpawned = 0;
-			keyUsed = 0;
-			questSpawned = 0;
-			questCompleted = 0;
-			itemTransmuted = 0;
-			potionCooked = 0;
-			barricadeBurned = 0;
-			wellSpawned = 0;
-			wellUSed = 0;
-			// map
-			SpecialRoomCount = 0;
-			HiddenDoorCount = 0;
-			hiddenDoorFound = 0;
-			TrapCount = 0;
-			averageDungeonWidth = 0;
-			averageDungeonHeight = 0;
-			averageDungeonLength = 0;
-			RoomCount = 0;
-			averageDistanceFromEntranceToExit = 0;
-			gameDuration = 0;
-			TotalUnexploredTilesRatio = 0; 
-			explorableTilesCount = 0;
-			roomSizeMin = 0;
-			roomSizeMax = 0;
-			// Used items
-			seedUsed = 0;
-			scrollUsed = 0;
-			potionThrown = 0;
-			potionDrank = 0;
-			throwingWeaponUsed = 0;
-			wandUsed = 0;
-			foodUsed = 0;	
-			// Resource scarcity
-			damageFromHunger = 0;
-			brokenItem = 0;
-			averageSpawnedItemCount = 0;
-			// Equipped gear
-			highestArmorResistance = 0;
-			highestAverageWeaponDamage = 0;
-			// Challenge
-			turnSpentLowHP = 0;
-			turnSpentHighHP = 0;
-			mobSlain = 0;
-			mobSpawned = 0;
-			damageReceived = 0;
-			deathCount = 0;
-			// status
-			deepestFloor = 0;
-			currentFloor = 0;
-			goldCollected = 0;
-			Level = 0;
-			Strength = 0;
-			if(heroClass ==  null) {
-				heroClass = "Unknown";
-			}
-			maxHP = 0;
-			heroAttackSkill = 0;
-			heroDefenseSkill = 0;
-			
-			// Actions 
-			searchDone = 0;
-			foundSomething = 0;
-			foundSomethingRandomly = 0;
-			attackCount = 0;
-			sneakAttackCount = 0;
-
-		}
-
-		public void updateFromFloorStats(FloorStatistics floorStats) {
-			
-			floorStatsArray[currentFloor] = floorStats;
-			/**
-			predictedChallenge = getChallenge();
-			identifiedGameplay = getGameplay();
-			predictedExploration = getExploration();
-			
-			challengeRating += predictedChallenge;
-			explorationRating += predictedExploration;
-			**/
-			
-			newLevelParameters.update();
-			
-			// Content
-			keySpawned += floorStats.keySpawned;
-			keyUsed += floorStats.keyUsed;
-			questSpawned += floorStats.questSpawned;
-			questCompleted += floorStats.questCompleted;
-			itemTransmuted += floorStats.itemTransmuted;
-			potionCooked += floorStats.potionCooked;
-			barricadeBurned += floorStats.barricadeBurned;
-			wellSpawned += floorStats.wellSpawned;
-			wellUSed += floorStats.wellUSed;
-			// map
-			SpecialRoomCount += floorStats.specialRoomCount;
-			HiddenDoorCount += floorStats.hiddenDoorCount;
-			hiddenDoorFound += floorStats.hiddenDoorFound;
-			TrapCount += floorStats.trapCount;
-			averageDungeonWidth += floorStats.dungeonWidth;
-			averageDungeonHeight += floorStats.dungeonHeight;
-			averageDungeonLength += floorStats.dungeonLength;
-			RoomCount += floorStats.roomCount;
-			averageDistanceFromEntranceToExit += floorStats.distanceFromEntranceToExit;
-			gameDuration += floorStats.floorDuration;
-			TotalUnexploredTilesRatio += floorStats.unexploredTilesRatio; 
-			explorableTilesCount += floorStats.explorableTilesCount;
-			// Used items
-			seedUsed += floorStats.seedUsed;
-			scrollUsed += floorStats.scrollUsed;
-			potionThrown += floorStats.potionThrown;
-			potionDrank += floorStats.potionDrank;
-			throwingWeaponUsed += floorStats.throwingWeaponUsed;
-			wandUsed += floorStats.wandUsed;
-			foodUsed += floorStats.foodUsed;	
-			// Resource scarcity
-			damageFromHunger += floorStats.damageFromHunger;
-			brokenItem += floorStats.brokenItem;
-			averageSpawnedItemCount += floorStats.spawnedItemCount;
-			// Equipped gear
-			highestArmorResistance += floorStats.highestArmorResistance;
-			highestAverageWeaponDamage += floorStats.highestAverageWeaponDamage;
-			// Challenge
-			turnSpentLowHP += floorStats.turnSpentLowHP;
-			turnSpentHighHP += floorStats.turnSpentHighHP;
-			mobSlain += floorStats.mobSlain;
-			mobSpawned += floorStats.mobSpawned;
-			damageReceived += floorStats.damageReceived;
-			deathCount += floorStats.deathInFloor;
-			// status
-			deepestFloor = floorStats.deepestFloor;
-			currentFloor = floorStats.currentFloor;
-			goldCollected += floorStats.goldCollected;
-			Level = floorStats.level;
-			Strength = floorStats.strength;
-			heroClass = floorStats.heroClass;			
-			maxHP = floorStats.maxHP;
-			heroAttackSkill = floorStats.heroAttackSkill;
-			heroDefenseSkill = floorStats.heroDefenseSkill;
-			// Actions 
-			searchDone += floorStats.searchDone;
-			foundSomething += floorStats.foundSomething;
-			foundSomethingRandomly += floorStats.foundSomethingRandomly;
-			attackCount += floorStats.attackCount;
-			sneakAttackCount += floorStats.sneakAttackCount;
-			
-			floorStats.reset();
-			
-			SacrificialFire.scrollSpawned = 0;
-
-		}		
-	}
-	
 	public static class LevelParameters {
 		// Depth, Width, levelWidth, levelHeight, minSpecialRoomCount, hiddenDoor, additionalTraps, roomMinSize, roomMaxSize
 		
@@ -846,28 +689,20 @@ public class Statistics {
 				minRoomSize = 6;
 				maxRoomSize = 8;
 				predictedExplorationRating = 2;
-				predictedGameplay = 3;
-				new ScrollOfMagicMapping().collect();
-				new ScrollOfMagicMapping().collect();
-				new ScrollOfMagicMapping().collect();
-				new ScrollOfMagicMapping().collect();
-				new ScrollOfUpgrade().collect();
-				new ScrollOfUpgrade().collect();
-				new ScrollOfUpgrade().collect();
+				predictedGameplay = 3;				
 			}
-			if(className == "mage") {
+			else if(className == "mage") {
 				minRoomSize = 7;
 				maxRoomSize = 10;
 				predictedExplorationRating = 0;
 				predictedGameplay = 2;
 				additionalItemToSpawn.add(Generator.random( Generator.Category.WAND ) );
 			}
-			if(className == "huntress") {
-				minRoomSize = 8;
-				maxRoomSize = 11;
+			else if(className == "huntress") {
+				minRoomSize = 7;
+				maxRoomSize = 10;
 				predictedExplorationRating = 2;
 				predictedGameplay = 1;
-				additionalItemToSpawn.add(Generator.random( Generator.Category.THROWINGWEAPON ) );
 			}
 			else {
 				minRoomSize = 7;
@@ -1000,17 +835,77 @@ public class Statistics {
 		public int getGameplay() {
 			// Run the RF Classifier functions for Gameplay.
 			// 0 for melee, 1 for range, 2 for magic, 3 for stealth
-			return 0;
+			// The gameplay in output will influence the item generation and the map layout to a certain degree.
+			
+			double[] inputGameplay = {floorStats.deepestFloor,floorStats.level,
+					floorStats.strength,floorStats.heroAttackSkill,floorStats.heroDefenseSkill,
+			        floorStats.mobSlain,floorStats.mobSpawned,floorStats.attackCount,
+			        floorStats.sneakAttackCount,floorStats.wandUsed,floorStats.throwingWeaponUsed, floorStats.scrollUsed,
+			        floorStats.potionDrank,floorStats.potionThrown,floorStats.damageReceived,floorStats.deathInFloor,
+			        floorStats.highestArmorResistance,floorStats.highestAverageWeaponDamage,floorStats.brokenItem,floorStats.trapCount, 
+			        floorStats.turnSpentLowHP,floorStats.turnSpentHighHP};
+			
+			int ratingGameplay = 0;
+			
+			try {
+				ratingGameplay = RandomForestClassifier.GameplayClassifier.predict(inputGameplay);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+			return ratingGameplay;
 		}
 		
 		public int getChallenge() {
 			// Run the RF Classifier functions for Challenge.
-			return 1;
+			// The labels used are 0 (too challenging), 1 (it's fine) and 2 (too easy).
+			// Returns (rating -1) to update the game parameters.
+			
+			// The challenge rating in output will influence the mobs / trap generation as well as influencing the item generation if necessary.
+			
+			double[] inputChallenge = {floorStats.deepestFloor,floorStats.level,
+					floorStats.strength,floorStats.heroAttackSkill,floorStats.heroDefenseSkill,
+			        floorStats.mobSlain,floorStats.mobSpawned,floorStats.attackCount,
+			        floorStats.sneakAttackCount,floorStats.wandUsed,floorStats.throwingWeaponUsed, floorStats.scrollUsed,
+			        floorStats.potionDrank,floorStats.potionThrown,floorStats.damageReceived,floorStats.deathInFloor,
+			        floorStats.highestArmorResistance,floorStats.highestAverageWeaponDamage,floorStats.brokenItem,floorStats.trapCount, 
+			        floorStats.turnSpentLowHP,floorStats.turnSpentHighHP};
+			
+			int ratingChallenge = 0;
+			
+			try {
+				ratingChallenge = RandomForestClassifier.ChallengeClassifier.predict(inputChallenge) -1;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+			return ratingChallenge;
 		}
 		
 		public int getExploration() {
-			// Run the RF Classifier functions for exploration.
-			return 1;
+			// Run the RF Classifier functions for exploration.		
+			// The labels used are 0 (too much), 1 (it's fine) and 2 (not enough).
+			// Returns (rating -1) to update the game parameters.
+			
+			// The exploration rating in output will influence map size, the addition of special features as well as balancing the food generation.
+			
+			double[] inputExploration = {floorStats.deepestFloor,floorStats.dungeonWidth,
+					floorStats.dungeonHeight,floorStats.explorableTilesCount,floorStats.unexploredTilesRatio,
+			        floorStats.floorDuration,floorStats.roomCount,floorStats.specialRoomCount,
+			        floorStats.hiddenDoorCount,floorStats.searchDone,floorStats.foundSomething, floorStats.foundSomethingRandomly,
+			        floorStats.roomSizeMin,floorStats.roomSizeMax,floorStats.keySpawned,floorStats.keyUsed,
+			        floorStats.questSpawned,floorStats.questCompleted,floorStats.wellSpawned,floorStats.wellUSed, 
+			        floorStats.itemTransmuted,floorStats.potionCooked,floorStats.barricadeBurned};
+			
+			int ratingExploration = 0;
+			
+			try {
+				ratingExploration = RandomForestClassifier.ExplorationClassifier.predict(inputExploration) -1;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+			return ratingExploration;
 		}
 		
 		public void updateMapParameters() {
@@ -1021,19 +916,9 @@ public class Statistics {
 			}
 			if(predictedChallengeRating > 5) {
 				predictedExplorationRating = (predictedExplorationRating < 2) ? 2 : predictedExplorationRating;
-			}
-			
-			
+			}	
 				
-			levelHeigth = 32 + 2 * predictedExplorationRating;
-			
-			if(levelHeigth > 64) {
-				levelHeigth = 64;
-			}
-			else if (levelHeigth < 32) {
-				levelHeigth = 32;
-			}
-			
+			levelHeigth = 32 + 2 * predictedExplorationRating;	
 			levelWidth = 32 + 2 * predictedExplorationRating;
 			
 			if(levelWidth > 64) {
@@ -1042,8 +927,15 @@ public class Statistics {
 			else if (levelWidth < 32) {
 				levelWidth = 32;
 			}
+			if(levelHeigth > 64) {
+				levelHeigth = 64;
+			}
+			else if (levelHeigth < 32) {
+				levelHeigth = 32;
+			}
 
 			additionalSpecialRoom = (int)predictedExplorationRating / 2;
+			additionalHiddenDoor = (int)predictedExplorationRating / 3;
 			
 			if(additionalSpecialRoom > (levelWidth / 10)) {
 				additionalSpecialRoom = (levelWidth / 10);
@@ -1051,48 +943,35 @@ public class Statistics {
 			if(additionalSpecialRoom < 0) {
 				additionalSpecialRoom = 0;
 			}
-			
-			additionalHiddenDoor = (int)predictedExplorationRating / 2;
-			
-			if(additionalHiddenDoor < 0) {
-				additionalHiddenDoor = 0;
-			}
 			if(additionalHiddenDoor > (levelWidth / 10)) {
 				additionalHiddenDoor = (int) levelWidth / 10 ;
 			}
-			
-			if (predictedGameplay == 1) {
-				minRoomSize = 8;
-				maxRoomSize = 10;
+			if(additionalHiddenDoor < 0) {
+				additionalHiddenDoor = 0;
 			}
 			
-			else if (predictedGameplay == 2) {
-				minRoomSize = 8;
+			if (predictedGameplay == 1 || predictedGameplay == 2) {
+				minRoomSize = 7;
 				maxRoomSize = 10;
-			}
-			
+			}			
 			else if (predictedGameplay == 3) {
 				minRoomSize = 5;
 				maxRoomSize = 8;
-			}
-			
+			}			
 			else {
 				minRoomSize = 7;
 				maxRoomSize = 9;
-			}
-			
+			}			
 			if(predictedExplorationRating >= 2) {
 				Ghost.Quest.reset();
 				Wandmaker.Quest.reset();
 				Blacksmith.Quest.reset();
-			}
+			}			
 			
 			if(Dungeon.depth == 24) {
 				levelHeigth = 32;
-				levelWidth = 32;
-						
-			}
-						
+				levelWidth = 32;						
+			}						
 		}
 		
 		public void updateChallengeParameters() {
@@ -1128,6 +1007,9 @@ public class Statistics {
 	}
 		
 }
+
+
+
 
 
 

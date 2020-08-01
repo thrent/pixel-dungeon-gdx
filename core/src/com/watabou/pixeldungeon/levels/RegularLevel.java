@@ -213,8 +213,7 @@ public abstract class RegularLevel extends Level {
 
 						r.type = Type.PIT;
 						pitRoomNeeded = false;
-
-						/**
+						
 						specials.remove( Type.ARMORY );
 						specials.remove( Type.CRYPT );
 						specials.remove( Type.LABORATORY );
@@ -222,7 +221,7 @@ public abstract class RegularLevel extends Level {
 						specials.remove( Type.STATUE );
 						specials.remove( Type.TREASURY );
 						specials.remove( Type.VAULT );
-						**/
+						
 						specials.remove( Type.WEAK_FLOOR );							
 					}
 					
