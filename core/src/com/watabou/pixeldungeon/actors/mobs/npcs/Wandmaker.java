@@ -121,6 +121,7 @@ public class Wandmaker extends NPC {
 		
 		private static boolean spawned;
 		private static boolean given;
+		private static int spawnCount = 0;
 		
 		public static Wand wand1;
 		public static Wand wand2;
@@ -182,7 +183,80 @@ public class Wandmaker extends NPC {
 		
 		public static void spawn( PrisonLevel level, Room room ) {
 			if (!spawned && Dungeon.depth > 6 && Random.Int( 10 - Dungeon.depth ) == 0) {
+				spawnCount ++;
+				Statistics.floorStats.questSpawned ++;
+				Wandmaker npc = new Wandmaker();
+				do {
+					npc.pos = room.random();
+				} while (level.map[npc.pos] == Terrain.ENTRANCE || level.map[npc.pos] == Terrain.SIGN);
+				level.mobs.add( npc );
+				Actor.occupyCell( npc );
 				
+				spawned = true;
+				switch (Random.Int( 3 )) {
+				case 0:
+					type = Type.BERRY;
+					break;
+				case 1:
+					type = Type.DUST;
+					break;
+				case 2:
+					type = Type.FISH;
+					int water = 0;
+					for (int i=0; i < Level.LENGTH; i++) {
+						if (Level.water[i]) {
+							if (++water > Level.LENGTH / 16) {
+								type = Random.Int( 2 ) == 0 ? Type.BERRY : Type.DUST;
+								break;
+							}
+						}
+					}
+					break;
+				}
+				
+				given = false;
+				
+				switch (Random.Int( 5 )) {
+				case 0:
+					wand1 = new WandOfAvalanche();
+					break;
+				case 1:
+					wand1 = new WandOfDisintegration();
+					break;
+				case 2:
+					wand1 = new WandOfFirebolt();
+					break;
+				case 3:
+					wand1 = new WandOfLightning();
+					break;
+				case 4:
+					wand1 = new WandOfPoison();
+					break;
+				}
+				wand1.random().upgrade();
+				
+				switch (Random.Int( 5 )) {
+				case 0:
+					wand2 = new WandOfAmok();
+					break;
+				case 1:
+					wand2 = new WandOfBlink();
+					break;
+				case 2:
+					wand2 = new WandOfRegrowth();
+					break;
+				case 3:
+					wand2 = new WandOfSlowness();
+					break;
+				case 4:
+					wand2 = new WandOfReach();
+					break;
+				}
+				wand2.random().upgrade();
+			}
+			// Guarantee that the quest spawn at least once
+			else if (spawnCount == 0 && Dungeon.depth == 9 && Statistics.newLevelParameters.predictedExplorationRating > 2) {
+
 				Statistics.floorStats.questSpawned ++;
 				Wandmaker npc = new Wandmaker();
 				do {

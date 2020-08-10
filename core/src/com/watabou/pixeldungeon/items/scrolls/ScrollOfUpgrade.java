@@ -58,7 +58,9 @@ public class ScrollOfUpgrade extends InventoryScroll {
 					Statistics.floorStats.highestArmorResistance = ((Armor) item).DR();
 				}
 			} else if (item instanceof Wand) {
-				
+				if (Statistics.floorStats.highestAverageWeaponDamage < ((Wand)item).averageDamage()) {
+					Statistics.floorStats.highestAverageWeaponDamage = ((Wand)item).averageDamage();
+				}
 			}
 			
 			

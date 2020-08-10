@@ -254,6 +254,7 @@ public class Blacksmith extends NPC {
 	public static class Quest {
 		
 		private static boolean spawned;
+		private static int spawnCount = 0;
 		
 		private static boolean alternative;
 		private static boolean given;
@@ -307,6 +308,26 @@ public class Blacksmith extends NPC {
 		
 		public static void spawn( Collection<Room> rooms ) {
 			if (!spawned && Dungeon.depth > 11 && Random.Int( 15 - Dungeon.depth ) == 0) {
+				Statistics.floorStats.questSpawned ++;
+				
+				Room blacksmith = null;
+				for (Room r : rooms) {
+					if (r.type == Type.STANDARD && r.width() > 4 && r.height() > 4) {
+						blacksmith = r;
+						blacksmith.type = Type.BLACKSMITH;
+						
+						spawned = true;
+						alternative = Random.Int( 2 ) == 0;
+						
+						given = false;
+						
+						break;
+					}
+				}
+			}
+			// Guarantee that the quest will spawn at least once
+			else if (spawnCount == 0 && Dungeon.depth == 14 && Statistics.newLevelParameters.predictedExplorationRating > 2) {
+				spawnCount ++;
 				Statistics.floorStats.questSpawned ++;
 				
 				Room blacksmith = null;

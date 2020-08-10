@@ -39,13 +39,14 @@ import com.watabou.pixeldungeon.items.Generator.Category;
 import com.watabou.pixeldungeon.items.Item;
 import com.watabou.pixeldungeon.items.Weightstone;
 import com.watabou.pixeldungeon.items.keys.IronKey;
+import com.watabou.pixeldungeon.items.potions.PotionOfMindVision;
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfEnchantment;
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.watabou.pixeldungeon.levels.Level;
 import com.watabou.pixeldungeon.levels.RegularLevel;
 import com.watabou.pixeldungeon.levels.Room;
-import com.watabou.pixeldungeon.RandomForestClassifier;
+import com.watabou.pixeldungeon.MLClassifier;
 
 public class Statistics {
 	
@@ -332,7 +333,7 @@ public class Statistics {
 			    PrintWriter out = new PrintWriter(bw))
 			{
 				String sentence = "1";
-				if(floorStats.unexploredTilesRatio <= 5) {
+				if(floorStats.unexploredTilesRatio <= 7) {
 					sentence = "2";
 				}
 				else if(floorStats.unexploredTilesRatio <= 15) {
@@ -355,7 +356,7 @@ public class Statistics {
 				String sentence = "0";
 				if(floorStats.wandUsed >= 2 && 
 						floorStats.wandUsed > 2 * floorStats.throwingWeaponUsed / 3 &&
-						floorStats.wandUsed > 2 * floorStats.sneakAttackCount / 3) {
+						floorStats.wandUsed > floorStats.sneakAttackCount / 3) {
 					sentence = "2";
 				}
 				else if(floorStats.throwingWeaponUsed >= 4 &&
@@ -383,10 +384,10 @@ public class Statistics {
 				if(floorStats.turnSpentLowHP >= 50 ) {
 					sentence = "0";
 				}
-				else if(floorStats.deathInFloor >= 0) {
+				else if(floorStats.deathInFloor > 0) {
 					sentence = "0";
 				}
-				else if (floorStats.turnSpentHighHP > 250 || floorStats.turnSpentHighHP > 2 * floorStats.floorDuration / 3){
+				else if (floorStats.turnSpentHighHP > 250 || floorStats.turnSpentHighHP > floorStats.floorDuration / 5){
 					sentence = "2";
 				}
 			    out.println(sentence);
@@ -672,8 +673,6 @@ public class Statistics {
 			levelWidth = 32;
 			additionalSpecialRoom = 0;
 			additionalHiddenDoor = 0;
-			additionalTraps = 0;
-			additionalMobs = 0;
 			levelSizeLeftovers = 0;
 			
 			// Challenge variables
@@ -685,18 +684,20 @@ public class Statistics {
 		}
 		
 		public void startParameters(String className) {
+			
 			if(className == "rogue") {
 				minRoomSize = 6;
 				maxRoomSize = 8;
 				predictedExplorationRating = 2;
-				predictedGameplay = 3;				
+				predictedGameplay = 3;	
 			}
 			else if(className == "mage") {
-				minRoomSize = 7;
-				maxRoomSize = 10;
+				minRoomSize = 12;
+				maxRoomSize = 15;
 				predictedExplorationRating = 0;
 				predictedGameplay = 2;
 				additionalItemToSpawn.add(Generator.random( Generator.Category.WAND ) );
+				new ScrollOfMagicMapping().collect();
 			}
 			else if(className == "huntress") {
 				minRoomSize = 7;
@@ -717,6 +718,8 @@ public class Statistics {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			updateMapParameters();
 		}
 		
 		public void generateItems() throws Exception {
@@ -761,6 +764,16 @@ public class Statistics {
 				{
 					itemToAdd = new ScrollOfUpgrade();
 					Dungeon.scrollsOfUpgrade ++;
+					
+					if((floorStats.heroClass == "mage" || floorStats.heroClass == "warlock" ||floorStats.heroClass == "battlemage")
+							&& (Random.Int(5) - predictedChallengeRating <= 0) ) 
+					{
+						// The Battlemage isn't viable at higher levels of challenge because the supply of scroll of upgrade
+						// isn't enough to offset the durability loss. As such they'll get additional scrolls along the way.
+						// Other gameplays rely on melee wepaons and armor which have other ways to repair their items.
+						additionalItemToSpawn.add(new ScrollOfUpgrade());						
+						Dungeon.scrollsOfUpgrade ++;
+					}
 				}
 				else if(randomUpgrade == 0) 
 				{
@@ -813,18 +826,19 @@ public class Statistics {
 			predictedChallengeRating += getChallenge();
 			predictedGameplay = getGameplay();
 			
+			
 			if(predictedExplorationRating > 10) {
 				predictedExplorationRating = 10;
 			}
-			if(predictedExplorationRating < -5) {
-				predictedExplorationRating = -5;
+			if(predictedExplorationRating < -3) {
+				predictedExplorationRating = -3;
 			}
 			
 			if(predictedChallengeRating > 10) {
 				predictedChallengeRating = 10;
 			}
-			if(predictedChallengeRating < -5) {
-				predictedChallengeRating = -5;
+			if(predictedChallengeRating < -3) {
+				predictedChallengeRating = -3;
 			}
 			
 			updateMapParameters();
@@ -848,7 +862,7 @@ public class Statistics {
 			int ratingGameplay = 0;
 			
 			try {
-				ratingGameplay = RandomForestClassifier.GameplayClassifier.predict(inputGameplay);
+				ratingGameplay = MLClassifier.GameplayClassifier.predict(inputGameplay);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -874,7 +888,7 @@ public class Statistics {
 			int ratingChallenge = 0;
 			
 			try {
-				ratingChallenge = RandomForestClassifier.ChallengeClassifier.predict(inputChallenge) -1;
+				ratingChallenge = MLClassifier.ChallengeClassifier.predict(inputChallenge) -1;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -900,7 +914,7 @@ public class Statistics {
 			int ratingExploration = 0;
 			
 			try {
-				ratingExploration = RandomForestClassifier.ExplorationClassifier.predict(inputExploration) -1;
+				ratingExploration = MLClassifier.ExplorationClassifier.predict(inputExploration) -1;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -955,7 +969,7 @@ public class Statistics {
 				maxRoomSize = 10;
 			}			
 			else if (predictedGameplay == 3) {
-				minRoomSize = 5;
+				minRoomSize = 6;
 				maxRoomSize = 8;
 			}			
 			else {

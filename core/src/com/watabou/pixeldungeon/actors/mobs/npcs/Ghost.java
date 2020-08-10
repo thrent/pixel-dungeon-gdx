@@ -166,6 +166,8 @@ public class Ghost extends NPC {
 		private static boolean given;
 		private static boolean processed;
 		
+		private static int spawnCount = 0;
+		
 		private static int depth;
 		
 		private static int left2kill;
@@ -243,7 +245,62 @@ public class Ghost extends NPC {
 		
 		public static void spawn( SewerLevel level ) {
 			if (!spawned && Dungeon.depth > 1 && Random.Int( 5 - Dungeon.depth ) == 0) {
+				spawnCount ++;
+				Statistics.floorStats.questSpawned ++;
 				
+				Ghost ghost = new Ghost();
+				do {
+					ghost.pos = level.randomRespawnCell();
+				} while (ghost.pos == -1);
+				level.mobs.add( ghost );
+				Actor.occupyCell( ghost );
+				
+				spawned = true;
+				switch (Random.Int( 3 )) {
+				case 0:
+					type = Type.ROSE;
+					left2kill = 8;
+					break;
+				case 1:
+					type = Type.RAT;
+					break;
+				case 2:
+					type = Type.CURSE;
+					break;
+				}
+				
+				given = false;
+				processed = false;
+				depth = Dungeon.depth;
+				
+				for (int i=0; i < 4; i++) {
+					Item another;
+					do {
+						another = (Weapon)Generator.random( Generator.Category.WEAPON );
+					} while (another instanceof MissileWeapon);
+					
+					if (weapon == null || another.level() > weapon.level()) {
+						weapon = (Weapon)another;
+					}
+				}
+				
+				if (Dungeon.isChallenged( Challenges.NO_ARMOR )) {
+					armor = (Armor)new ClothArmor().degrade();
+				} else {
+					armor = (Armor)Generator.random( Generator.Category.ARMOR );
+					for (int i=0; i < 3; i++) {
+						Item another = Generator.random( Generator.Category.ARMOR );
+						if (another.level() > armor.level()) {
+							armor = (Armor)another;
+						}
+					}
+				}
+				
+				weapon.identify();
+				armor.identify();
+			}
+			
+			else if (spawnCount == 0 && Dungeon.depth == 4 && Statistics.newLevelParameters.predictedExplorationRating > 2) {
 				Statistics.floorStats.questSpawned ++;
 				
 				Ghost ghost = new Ghost();

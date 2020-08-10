@@ -346,6 +346,10 @@ public abstract class Wand extends KindOfWeapon {
 		return (tier * tier - tier + 10) / 2 + level;
 	}
 	
+	public int averageDamage() {
+		return (int)(min() + (max() - min()) / 2);
+	}
+	
 	protected void fx( int cell, Callback callback ) {
 		MagicMissile.blueLight( curUser.sprite.parent, curUser.pos, cell, callback );
 		Sample.INSTANCE.play( Assets.SND_ZAP );

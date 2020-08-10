@@ -512,7 +512,7 @@ public abstract class RegularLevel extends Level {
 					else {
 						// Will add additional secret doors based on the exploration rating.
 						if (bonusSecretDoors > 0) {
-							map[door] = (Random.Int( 4 ) == 0) ? Terrain.SECRET_DOOR : Terrain.DOOR;
+							map[door] = (Random.Int( 3 ) == 0) ? Terrain.SECRET_DOOR : Terrain.DOOR;
 							bonusSecretDoors --;
 							Statistics.floorStats.hiddenDoorCount ++;
 						}
