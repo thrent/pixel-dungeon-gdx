@@ -692,12 +692,11 @@ public class Statistics {
 				predictedGameplay = 3;	
 			}
 			else if(className == "mage") {
-				minRoomSize = 12;
-				maxRoomSize = 15;
+				minRoomSize = 8;
+				maxRoomSize = 10;
 				predictedExplorationRating = 0;
 				predictedGameplay = 2;
 				additionalItemToSpawn.add(Generator.random( Generator.Category.WAND ) );
-				new ScrollOfMagicMapping().collect();
 			}
 			else if(className == "huntress") {
 				minRoomSize = 7;
